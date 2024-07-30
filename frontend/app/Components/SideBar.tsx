@@ -23,9 +23,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { usePathname } from "next/navigation";
+import { OktoContextType, useOkto } from "okto-sdk-react";
 
 function SideBar() {
   const pathname = usePathname();
+  const { showWidgetModal } = useOkto() as OktoContextType;
+
   const getLinkClass = (href: string) => {
     const baseClass =
       "flex items-center gap-3 rounded-lg px-3 py-2 transition-all";
@@ -34,6 +37,7 @@ function SideBar() {
 
     return `${baseClass} ${pathname === href ? activeClass : inactiveClass}`;
   };
+
   return (
     <>
       <div className="hidden border-r bg-muted/40 md:block">
@@ -65,9 +69,9 @@ function SideBar() {
                 <Package className="h-4 w-4" />
                 Explore
               </Link>
-              <Link href="/settings" className={getLinkClass("/settings")}>
+              <Link href="/wallet" className={getLinkClass("/wallet")}>
                 <Settings className="h-4 w-4" />
-                Settings
+                Wallet
               </Link>
             </nav>
           </div>
@@ -75,13 +79,17 @@ function SideBar() {
             <Card x-chunk="dashboard-02-chunk-0">
               <CardHeader className="p-2 pt-0 md:p-4">
                 <CardTitle>Powered by OktoWallet</CardTitle>
-                <CardDescription>
+                {/* <CardDescription>
                   Wallet ID : a2ieurfherifnerinurnirneuf
-                </CardDescription>
+                </CardDescription> */}
               </CardHeader>
               <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                <Button size="sm" className="w-full">
-                  Disconnect
+                <Button
+                  size="sm"
+                  className="w-full"
+                  onClick={() => showWidgetModal()}
+                >
+                  Show Wallet
                 </Button>
               </CardContent>
             </Card>

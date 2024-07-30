@@ -5,21 +5,6 @@ import Stories from "../Components/Stories";
 import { useEffect } from "react";
 
 export default function Home() {
-  const { getUserDetails } = useOkto() as OktoContextType;
-
-  useEffect(() => {
-    getUserDetails()
-      .then((result) => {
-        console.log("USERR");
-        console.log(result);
-      })
-      .catch((error) => {
-        console.error(`error:`, error);
-      });
-    
-    console.log("ok");
-  }, []);
-
   return (
     <>
       <div className="flex w-full h-full">

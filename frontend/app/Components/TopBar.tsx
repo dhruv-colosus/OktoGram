@@ -34,9 +34,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthStore } from "@/store";
 function TopBar() {
   const pathname = usePathname();
+
+  const { logout } = useAuthStore();
+  const router = useRouter();
 
   const getLinkClass = (href: string) => {
     const baseClass =
@@ -133,7 +137,15 @@ function TopBar() {
             </Link>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                logout();
+                router.push("/signin");
+              }}
+            >
+              Logout
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </header>

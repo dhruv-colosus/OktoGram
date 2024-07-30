@@ -41,17 +41,16 @@ export default function Callback({
       authenticate(searchParams.id_token, (result, error) => {
         if (result) {
           console.log("authentication successful", result);
-          router.replace("/");
         }
         if (error) {
           console.error("authentication error:", error);
-          router.replace("/signin");
         }
       });
     } catch (error) {
       console.log("Something went wrong. Please try again");
       router.replace("/signin");
     }
+    router.replace("/");
   }, []);
 
   return (
