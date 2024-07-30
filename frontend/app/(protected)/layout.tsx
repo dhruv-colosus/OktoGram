@@ -9,11 +9,11 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+    <div className="flex h-screen w-full">
       <SideBar />
-      <div className="flex flex-col">
+      <div className="flex flex-col flex-grow overflow-hidden">
         <TopBar />
-        <main className="flex flex-1 flex-col">{children}</main>
+        <div className="flex flex-1 overflow-hidden">{children}</div>
       </div>
     </div>
   );
