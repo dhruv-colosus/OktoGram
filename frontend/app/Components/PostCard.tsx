@@ -73,7 +73,7 @@ function PostCard() {
               className="w-full h-auto max-h-[500px] object-cover"
             />
           </CardContent>
-          <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3 justify-between">
+          <CardFooter className="flex flex-row items-start border-t bg-muted/50 px-6 py-3 justify-between">
             <div>
               <div className="flex flex-row gap-4">
                 <Heart
@@ -87,10 +87,18 @@ function PostCard() {
                 <MessageCircle strokeWidth={1} className="cursor-pointer" />
                 <Share2 strokeWidth={1} className="cursor-pointer" />
               </div>
-              <p className="text-xs mt-2 font-web3">25 Likes</p>
+              <p className="text-xs mt-3 font-web3">
+                {" "}
+                We are hiring for a new position. Click the link in the bio to
+                know more.
+              </p>
             </div>
-            <Bookmark strokeWidth={1} className="cursor-pointer" />
+            <Bookmark strokeWidth={1} className="cursor-pointer " />
           </CardFooter>
+          <div className="flex bg-muted/50 px-6 pb-3 text-xs font-web3 text-gray-400 justify-between">
+            <p>25 Likes</p>
+            <p>2 Comments</p>
+          </div>
         </Card>
       </div>
     </>

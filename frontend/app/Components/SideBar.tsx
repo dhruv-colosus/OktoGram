@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   Bell,
   Cannabis,
+  CirclePlus,
   Gift,
   Home,
   LineChart,
@@ -64,6 +65,10 @@ function SideBar() {
               <Link href="/explore" className={getLinkClass("/explore")}>
                 <Package className="h-4 w-4" />
                 Explore
+              </Link>
+              <Link href="/create" className={getLinkClass("/create")}>
+                <CirclePlus className="h-4 w-4" />
+                Create post
               </Link>
               <Link href="/settings" className={getLinkClass("/settings")}>
                 <Settings className="h-4 w-4" />

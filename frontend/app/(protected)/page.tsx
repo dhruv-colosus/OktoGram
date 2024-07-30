@@ -26,8 +26,8 @@ export default function Home() {
 
   return (
     <>
-      <main className="flex-grow overflow-y-auto">
-        <div className="flex-grow  p-5 ">
+      <main className="overflow-y-auto">
+        <div className=" p-5 ">
           <h2 className="font-web3 font-bold text-2xl mb-4">Latest Stories</h2>
           <Stories />
           <h2 className="font-web3 font-bold text-2xl mb-4 mt-8 ">New Posts</h2>
@@ -38,7 +38,7 @@ export default function Home() {
           </div>
         </div>
       </main>
-      <div className="w-[220px] lg:w-[280px] overflow-y-auto p-5 flex-shrink-0">
+      <div className="w-[300px] lg:w-[300px] overflow-y-auto p-5 flex-shrink-0">
         <RightBar />
         <FriendsRec />
       </div>
