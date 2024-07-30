@@ -30,9 +30,7 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <RootProviders>
-          {children}
-        </RootProviders>
+        <RootProviders>{children}</RootProviders>
       </body>
     </html>
   );

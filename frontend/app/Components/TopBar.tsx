@@ -2,6 +2,7 @@
 import Link from "next/link";
 import {
   Cannabis,
+  CirclePlus,
   CircleUser,
   Gift,
   Home,
@@ -87,6 +88,10 @@ function TopBar() {
               <Link href="/explore" className={getLinkClass("/explore")}>
                 <Package className="h-5 w-5" />
                 Explore
+              </Link>
+              <Link href="/create" className={getLinkClass("/create")}>
+                <CirclePlus className="h-5 w-5" />
+                Create post
               </Link>
               <Link href="/settings" className={getLinkClass("/settings")}>
                 <Settings className="h-5 w-5" />

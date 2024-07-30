@@ -2,18 +2,30 @@
 
 import { OktoContextType, useOkto } from "okto-sdk-react";
 import Stories from "../Components/Stories";
+import RightBar from "../Components/RightBar";
+import PostCard from "../Components/PostCard";
+import FriendsRec from "../Components/FriendsRec";
+
 import { useEffect } from "react";
 
 export default function Home() {
   return (
     <>
-      <div className="flex w-full h-full">
-        <div className="flex-grow w-4/5 p-5">
+      <main className="overflow-y-auto">
+        <div className=" p-5 ">
           <h2 className="font-web3 font-bold text-2xl mb-4">Latest Stories</h2>
           <Stories />
-          <h2 className="font-web3 font-bold text-2xl mb-4 mt-8">New Posts</h2>
+          <h2 className="font-web3 font-bold text-2xl mb-4 mt-8 ">New Posts</h2>
+          <div className="flex flex-col items-center justify-center">
+            <PostCard />
+            <PostCard />
+            <PostCard />
+          </div>
         </div>
-        <div className="flex-grow w-1/5  h-full p-5">Right Section</div>
+      </main>
+      <div className="w-[300px] lg:w-[300px] overflow-y-auto p-5 flex-shrink-0">
+        <RightBar />
+        <FriendsRec />
       </div>
     </>
   );
