@@ -6,9 +6,23 @@ import RightBar from "../Components/RightBar";
 import PostCard from "../Components/PostCard";
 import FriendsRec from "../Components/FriendsRec";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getPosts } from "@/actions/post";
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [posts, setPosts] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchposts = async () => {
+      const posts = await getPosts({ skip: 0, take: 50 });
+      console.log("posts are :", posts);
+      setPosts(posts);
+    };
+
+    fetchposts();
+  }, []);
+
   return (
     <>
       <main className="overflow-y-auto">
@@ -17,9 +31,18 @@ export default function Home() {
           <Stories />
           <h2 className="font-web3 font-bold text-2xl mb-4 mt-8 ">New Posts</h2>
           <div className="flex flex-col items-center justify-center">
-            <PostCard />
-            <PostCard />
-            <PostCard />
+            {posts?.map((post) => {
+              return (
+                <>
+                  <PostCard
+                    caption={post?.content}
+                    image={post?.Image[0]}
+                    user={post?.author.email}
+                    createdAt={post?.createdAt}
+                  />
+                </>
+              );
+            })}
           </div>
         </div>
       </main>

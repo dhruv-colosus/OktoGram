@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { OktoProvider, BuildType } from "okto-sdk-react";
 import { cn } from "@/lib/utils";
 import RootProviders from "./Components/root-providers";
+import { Toaster } from "@/components/ui/sonner";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -30,7 +31,10 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <RootProviders>{children}</RootProviders>
+        <RootProviders>
+          {children}
+          <Toaster richColors />
+        </RootProviders>
       </body>
     </html>
   );

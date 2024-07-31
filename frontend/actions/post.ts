@@ -13,9 +13,21 @@ export const getPosts = async ({
     skip,
     take,
     include: {
-      _count: {
-        select: { Like: true },
+      Image: {
+        take: 1,
       },
+      author: {
+        select: {
+          id: true,
+          email: true,
+        },
+      },
+      // _count: {
+      //   select: { Like: true },
+      // },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 

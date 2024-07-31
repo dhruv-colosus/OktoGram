@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "regen":"prisma generate",
-    "schema-pull":"prisma db pull",
-    "schema-push":"prisma db push"
+    "regen": "prisma generate",
+    "schema-pull": "prisma db pull",
+    "schema-push": "prisma db push"
   },
   "dependencies": {
     "@prisma/client": "^5.17.0",
@@ -33,6 +33,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
+    "sonner": "^1.5.0",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "zustand": "^4.5.4"
