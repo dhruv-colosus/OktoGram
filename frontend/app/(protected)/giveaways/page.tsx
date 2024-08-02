@@ -1,11 +1,9 @@
 "use client";
 import GiveawayCard from "@/app/Components/Giveawaycard";
 import PostCard from "@/app/Components/PostCard";
-import { OktoContextType, useOkto } from "okto-sdk-react";
 
 import { useEffect, useState } from "react";
 import { getGiveaways, getPosts } from "@/actions/post";
-import { GiveawayPost } from "@prisma/client";
 function Home() {
   const [error, setError] = useState<string | null>(null);
   const [posts, setPosts] = useState<any[]>([]);

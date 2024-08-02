@@ -1,6 +1,5 @@
 "use client";
 
-import { OktoContextType, useOkto } from "okto-sdk-react";
 import Stories from "../Components/Stories";
 import RightBar from "../Components/RightBar";
 import PostCard from "../Components/PostCard";
@@ -10,8 +9,6 @@ import { useEffect, useState } from "react";
 import { getPosts } from "@/actions/post";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
   useEffect(() => {
     const fetchposts = async () => {
