@@ -34,6 +34,8 @@ model Post {
 model GiveawayPost {
   postId      String @id
   likesNeeded Int
+  seed        Bytes
+  seedHash    String
   post        Post   @relation(fields: [postId], references: [id])
 }
 

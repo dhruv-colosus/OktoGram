@@ -4,13 +4,14 @@ import PostCard from "@/app/Components/PostCard";
 import { OktoContextType, useOkto } from "okto-sdk-react";
 
 import { useEffect, useState } from "react";
-import { getPosts } from "@/actions/post";
+import { getGiveaways, getPosts } from "@/actions/post";
+import { GiveawayPost } from "@prisma/client";
 function Home() {
   const [error, setError] = useState<string | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
   useEffect(() => {
     const fetchposts = async () => {
-      const posts = await getPosts({ skip: 0, take: 50 });
+      const posts = await getGiveaways({ skip: 0, take: 50 });
       // console.log("posts are :", posts);
       setPosts(posts);
     };
@@ -27,10 +28,10 @@ function Home() {
               return (
                 <>
                   <GiveawayCard
-                    caption={post?.content}
-                    image={post?.Image[0]}
-                    user={post?.author.email}
-                    createdAt={post?.createdAt}
+                    caption={post?.post?.content}
+                    image={post?.post?.Image[0]}
+                    user={post?.post?.author.email}
+                    createdAt={post?.post?.createdAt}
                   />
                 </>
               );
