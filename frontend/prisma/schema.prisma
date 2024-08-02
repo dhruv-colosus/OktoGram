@@ -32,9 +32,8 @@ model Post {
 }
 
 model GiveawayPost {
-  id          String @id @default(uuid())
+  postId      String @id
   likesNeeded Int
-  postId      String @unique
   post        Post   @relation(fields: [postId], references: [id])
 }
 
@@ -55,11 +54,14 @@ model Like {
 }
 
 model Tip {
-  id     String @id
-  from   User   @relation(fields: [userId], references: [id])
-  post   Post   @relation(fields: [postId], references: [id])
-  postId String
-  userId String
+  id      String @id
+  from    User   @relation(fields: [userId], references: [id])
+  post    Post   @relation(fields: [postId], references: [id])
+  network String
+  token   String
+  amount  String
+  postId  String
+  userId  String
 }
 
 model Notification {

@@ -56,14 +56,38 @@ interface PostCardProps {
   image: ImageObject | null;
   user: string;
   createdAt: Date;
+  postId: string;
 }
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-function PostCard({ caption, image, user, createdAt }: PostCardProps) {
+import { getPostTipNetworks, storeTip } from "@/actions/post";
+import { useAuthStore } from "@/store";
+import { OktoContextType, Token, Wallet, useOkto } from "okto-sdk-react";
+import { toast } from "sonner";
+
+const toNetworkName = (capsName: string) => {
+  return capsName
+    .toLowerCase()
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+function PostCard({ postId, caption, image, user, createdAt }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const handleHeartClick = () => {
     setIsLiked(!isLiked);
   };
+  const [tipNetworks, setTipNetworks] = useState<Wallet[] | null>(null);
+  const [availTokens, setAvailTokens] = useState<Token[]>([]);
+  const { user: authUser } = useAuthStore();
+  const [loading, setLoading] = useState(false);
+  const { transferTokens } = useOkto() as OktoContextType;
+
+  const [networkVal, setNetworkVal] = useState("");
+  const [tokenVal, setTokenVal] = useState<string>("0x");
+  const [amountVal, setAmountVal] = useState<number>(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   function getMinutesAgo(createdAt: Date): number {
     const now = new Date();
@@ -73,14 +97,62 @@ function PostCard({ caption, image, user, createdAt }: PostCardProps) {
     );
     return differenceInMinutes;
   }
-  const [loading, setLoading] = useState(false);
+
   const awardfunc = async () => {
+    console.log(amountVal, networkVal, tokenVal);
+
     setLoading(true);
-    setTimeout(() => {
-      console.log("hello");
-    }, 1000);
-    setLoading(false);
+    transferTokens({
+      network_name: networkVal,
+      token_address: tokenVal === "NATIVE" ? "" : tokenVal,
+      recipient_address:
+        tipNetworks?.find((w) => w.network_name === networkVal)?.address || "",
+      quantity: amountVal.toString(),
+    })
+      .then(async (result) => {
+        toast.success("Transfer successful");
+        console.log("Transfer success", result);
+        setDialogOpen(false);
+        await storeTip({
+          userId: authUser!.user_id,
+          postId,
+          network: networkVal,
+          token: tokenVal,
+          amount: amountVal.toString(),
+          orderId: result.orderId,
+        });
+        console.log("stored tip");
+      })
+      .catch((error) => {
+        toast.error("Transfer error");
+        console.log("Transfer error", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
+
+  const onOpenChange = (open: boolean) => {
+    setDialogOpen(open);
+    if (open && !tipNetworks) {
+      setTipNetworks([]);
+      getPostTipNetworks(
+        postId,
+        authUser?.wallets.map((wallet) => wallet.network_name) || []
+      ).then((postNetworks) => {
+        setTipNetworks(postNetworks);
+        console.log(postNetworks);
+      });
+    }
+  };
+
+  const networkValChange = (newNetwork: string) => {
+    setNetworkVal(newNetwork);
+    setAvailTokens(
+      authUser?.tokens.filter((tok) => tok.network_name === newNetwork) || []
+    );
+  };
+
   return (
     <>
       <div className="mb-4 w-1/2 overflow-y-auto ">
@@ -104,7 +176,7 @@ function PostCard({ caption, image, user, createdAt }: PostCardProps) {
               </CardTitle>
             </div>
             <div className="ml-auto flex items-center gap-1">
-              <Dialog>
+              <Dialog open={dialogOpen} onOpenChange={onOpenChange}>
                 <DialogTrigger asChild>
                   <Gem className="cursor-pointer mr-4 hover:text-red-400 transition delay-75" />
                 </DialogTrigger>
@@ -121,14 +193,19 @@ function PostCard({ caption, image, user, createdAt }: PostCardProps) {
                       <Label htmlFor="name" className="text-right">
                         Network
                       </Label>
-                      <Select>
+                      <Select
+                        value={networkVal}
+                        onValueChange={networkValChange}
+                      >
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select Network" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Solana">Solana</SelectItem>
-                          <SelectItem value="Polygon">Polygon</SelectItem>
-                          <SelectItem value="Ethereum">Ethereum</SelectItem>
+                          {(tipNetworks ?? []).map((tipNetwork) => (
+                            <SelectItem value={tipNetwork.network_name}>
+                              {toNetworkName(tipNetwork.network_name)}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -136,32 +213,44 @@ function PostCard({ caption, image, user, createdAt }: PostCardProps) {
                       <Label htmlFor="username" className="text-right">
                         Token
                       </Label>
-                      <Select>
+                      <Select
+                        value={tokenVal}
+                        onValueChange={(newVal) => setTokenVal(newVal)}
+                      >
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select Token" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Solana">SOL</SelectItem>
-                          <SelectItem value="Polygon">ETH</SelectItem>
-                          <SelectItem value="Ethereum">MATIC</SelectItem>
-                          <SelectItem value="Ethereum">USDC</SelectItem>
-                          <SelectItem value="Ethereum">USDT</SelectItem>
+                          {availTokens.map((availToken) => (
+                            <SelectItem
+                              value={availToken.token_address || "NATIVE"}
+                            >
+                              {availToken.token_name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                       <Label htmlFor="username" className="text-right">
-                        Amount in USD
+                        Amount
                       </Label>
                       <Input
                         id="username"
+                        type="number"
                         defaultValue="$0"
+                        value={amountVal}
+                        onChange={(e) => setAmountVal(Number(e.target.value))}
                         className="col-span-3"
                       />
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button type="submit" onClick={awardfunc}>
+                    <Button
+                      type="submit"
+                      onClick={awardfunc}
+                      disabled={loading}
+                    >
                       Award
                     </Button>
                   </DialogFooter>

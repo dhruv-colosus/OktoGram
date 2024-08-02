@@ -35,6 +35,7 @@ export default function Home() {
               return (
                 <>
                   <PostCard
+                    postId={post?.id}
                     caption={post?.content}
                     image={post?.Image[0]}
                     user={post?.author.email}

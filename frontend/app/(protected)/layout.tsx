@@ -15,7 +15,8 @@ export default function ProtectedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { authenticate, getUserDetails } = useOkto() as OktoContextType;
+  const { authenticate, getUserDetails, getSupportedTokens } =
+    useOkto() as OktoContextType;
   const { accessToken, logout, setUser } = useAuthStore();
   const [authToken, setAuthToken] = useState<string | null>(null);
   const router = useRouter();
@@ -56,10 +57,13 @@ export default function ProtectedLayout({
             },
           }
         );
+        const tokens = await getSupportedTokens();
+
         setUser({
           user_id: details.user_id,
           email: details.email,
-          wallets: wallets.data.filter((w: any) => w.success),
+          wallets: wallets.data.data.wallets.filter((w: any) => w.success),
+          tokens: tokens.tokens,
         });
         registerUser(details.user_id, details.email);
       } catch (e) {

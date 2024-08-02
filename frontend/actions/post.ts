@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { instance } from "./instance";
+import { Wallet } from "okto-sdk-react";
 
 export const getPosts = async ({
   skip = 0,
@@ -83,15 +84,17 @@ export const getPostTipNetworks = async (
     params: { user_id: post.authorId },
   });
 
+  const receiverWallets = res.data.data.wallets as Wallet[];
+
   const receiverNetworks = new Set<string>(
-    res.data.data.wallets.map((w: any) => w.network_name)
+    receiverWallets.map((w) => w.network_name)
   );
 
-  const intersection = new Set();
+  const intersection = new Set<string>();
   for (var x of senderNetworks)
     if (receiverNetworks.has(x)) intersection.add(x);
 
-  return Array.from(intersection.values());
+  return receiverWallets.filter((w) => intersection.has(w.network_name));
 };
 
 export const storeTip = async ({
@@ -100,12 +103,16 @@ export const storeTip = async ({
   network,
   token,
   amount,
+  orderId,
 }: {
   userId: string;
   postId: string;
   network: string;
   token: string;
-  amount: number;
+  amount: string;
+  orderId: string;
 }) => {
-  
+  await prisma.tip.create({
+    data: { id: orderId, postId, userId, network, token, amount },
+  });
 };

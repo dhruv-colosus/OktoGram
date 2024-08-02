@@ -1,15 +1,17 @@
+import { Token } from "okto-sdk-react";
 import { create } from "zustand";
 import { persist, devtools } from "zustand/middleware";
 
 interface IWallet {
   address: string;
-  network: string;
+  network_name: string;
 }
 
 interface IUser {
   user_id: string;
   email: string;
   wallets: IWallet[];
+  tokens: Token[];
 }
 
 interface IStore {
