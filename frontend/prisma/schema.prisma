@@ -54,14 +54,15 @@ model Like {
 }
 
 model Tip {
-  id      String @id
-  from    User   @relation(fields: [userId], references: [id])
-  post    Post   @relation(fields: [postId], references: [id])
-  network String
-  token   String
-  amount  String
-  postId  String
-  userId  String
+  id        String   @id
+  from      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+  network   String
+  token     String
+  amount    String
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
 }
 
 model Notification {
