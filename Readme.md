@@ -18,6 +18,10 @@ You can check out a live demo of our application [here](https://oktogram.ujwl.in
 
 For a detailed walkthrough of the application and its features, watch our demo video [here](https://www.loom.com/share/206c6a24b17441f69c0fd72c78a0c95f?sid=97ea7591-853d-40bf-9663-87a8c3d3d2e0).
 
+## Code Walkthrough
+
+For a detailed walkthrough of the Code and OktoSDK uses [here](#).
+
 ## About the Application
 
 Our application is a cutting-edge social media platform built on web3 technology, offering users a modern and engaging experience:
