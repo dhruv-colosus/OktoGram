@@ -8,35 +8,69 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  posts     Post[]
-  giveaways GiveawayPost[]
+  id           String         @id
+  email        String         @unique
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Like         Like[]
+  Notification Notification[]
+  posts        Post[]
+  Tip          Tip[]
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  content   String
-  likes    Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  authorId  Int
-  author    User     @relation(fields: [authorId], references: [id])
+  id           String        @id
+  content      String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  authorId     String
+  GiveawayPost GiveawayPost?
+  Image        Image[]
+  Like         Like[]
+  author       User          @relation(fields: [authorId], references: [id])
+  Tip          Tip[]
 }
 
 model GiveawayPost {
-  id          Int      @id @default(autoincrement())
-  title       String
-  likes    Int      @default(0)
-  description String
-  prize       String
-  endDate     DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  authorId    Int
-  author      User     @relation(fields: [authorId], references: [id])
+  postId      String @id
+  likesNeeded Int
+  seed        Bytes
+  seedHash    String
+  Post        Post   @relation(fields: [postId], references: [id])
+}
+
+model Image {
+  id      String @id
+  content String
+  postId  String
+  Post    Post   @relation(fields: [postId], references: [id])
+}
+
+model Like {
+  userId String
+  postId String
+  Post   Post   @relation(fields: [postId], references: [id])
+  User   User   @relation(fields: [userId], references: [id])
+
+  @@id([userId, postId])
+}
+
+model Notification {
+  id      String  @id
+  userId  String
+  seen    Boolean @default(false)
+  content String
+  User    User    @relation(fields: [userId], references: [id])
+}
+
+model Tip {
+  id        String   @id
+  network   String
+  token     String
+  amount    String
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  Post      Post     @relation(fields: [postId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
 }

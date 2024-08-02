@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { instance } from "./instance";
 import { Wallet } from "okto-sdk-react";
+import seedrandom from "seedrandom";
 
 export const getPosts = async ({
   skip = 0,
@@ -148,6 +149,54 @@ export const doPostInteraction = async (
     await prisma.like.create({ data: { userId, postId } });
   } else if (!like && likeObj) {
     await prisma.like.delete({ where: { userId_postId: { userId, postId } } });
+  }
+
+  const post = await prisma.giveawayPost.findUnique({
+    where: { postId },
+    include: { post: true },
+  });
+  if (post && !post.goalMet) {
+    const likes = await prisma.like.count({ where: { postId } });
+    if (likes >= post.likesNeeded) {
+      await prisma.giveawayPost.update({
+        where: { postId },
+        data: { goalMet: true },
+      });
+    }
+    const prng = seedrandom(post.seed.toString("hex"));
+    const winnerIdx = prng.int32() % post.likesNeeded;
+
+    const winner = (
+      await prisma.like.findMany({
+        where: { postId },
+        take: 1,
+        skip: winnerIdx,
+      })
+    )[0];
+
+    const winnerUser = await prisma.user.findUnique({
+      where: { id: winner.userId },
+    });
+
+    const res = await instance.get("/s2s/api/v1/wallet", {
+      params: { user_id: winner.userId },
+    });
+
+    const winnerWallets = res.data.data.wallets as Wallet[];
+
+    const NETWORK_NAME = "POLYGON";
+    instance.post("/s2s/api/v2/nft/tranfer", {
+      operation_type: "NFT_TRANSFER",
+      network_name: NETWORK_NAME,
+      collection_address: "",
+      collection_name: "",
+      quantity: "1",
+      user_id: post.post.authorId,
+      recipient_address: winnerWallets.find(
+        (wallet) => wallet.network_name === NETWORK_NAME
+      ),
+      nft_address: "",
+    });
   }
 };
 

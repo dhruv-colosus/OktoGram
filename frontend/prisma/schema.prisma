@@ -32,11 +32,12 @@ model Post {
 }
 
 model GiveawayPost {
-  postId      String @id
+  postId      String  @id
   likesNeeded Int
   seed        Bytes
   seedHash    String
-  post        Post   @relation(fields: [postId], references: [id])
+  goalMet     Boolean @default(false)
+  post        Post    @relation(fields: [postId], references: [id])
 }
 
 model Image {
