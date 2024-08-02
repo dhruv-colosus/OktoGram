@@ -25,9 +25,9 @@ export const getPosts = async ({
         },
       },
       GiveawayPost: undefined,
-      // _count: {
-      //   select: { Like: true },
-      // },
+      _count: {
+        select: { Like: true },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -58,6 +58,9 @@ export const getGiveaways = async ({
               id: true,
               email: true,
             },
+          },
+          _count: {
+            select: { Like: true },
           },
         },
       },

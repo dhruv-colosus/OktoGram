@@ -57,6 +57,7 @@ interface PostCardProps {
   user: string;
   createdAt: Date;
   postId: string;
+  likes: number;
 }
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -73,7 +74,14 @@ const toNetworkName = (capsName: string) => {
     .join(" ");
 };
 
-function PostCard({ postId, caption, image, user, createdAt }: PostCardProps) {
+function PostCard({
+  postId,
+  caption,
+  image,
+  user,
+  createdAt,
+  likes,
+}: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const handleHeartClick = () => {
     setIsLiked(!isLiked);
@@ -298,7 +306,7 @@ function PostCard({ postId, caption, image, user, createdAt }: PostCardProps) {
             <Bookmark strokeWidth={1} className="cursor-pointer " />
           </CardFooter>
           <div className="flex bg-muted/50 px-6 pb-3 text-xs font-web3 text-gray-400 justify-between">
-            <p>25 Likes</p>
+            <p>{likes} Likes</p>
             <p>2 Comments</p>
           </div>
         </Card>

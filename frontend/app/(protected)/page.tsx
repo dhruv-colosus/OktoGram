@@ -16,7 +16,7 @@ export default function Home() {
   useEffect(() => {
     const fetchposts = async () => {
       const posts = await getPosts({ skip: 0, take: 50 });
-      // console.log("posts are :", posts);
+      console.log("posts are :", posts);
       setPosts(posts);
     };
 
@@ -40,6 +40,7 @@ export default function Home() {
                     image={post?.Image[0]}
                     user={post?.author.email}
                     createdAt={post?.createdAt}
+                    likes={post?._count?.Like}
                   />
                 </>
               );

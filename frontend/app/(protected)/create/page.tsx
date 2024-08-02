@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { createPost } from "@/actions/post";
+import { createGiveaway, createPost } from "@/actions/post";
 import { useAuthStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -65,13 +65,19 @@ function page() {
       );
       var postId;
       if (nooflikes) {
-        postId = await createPost(caption, user.user_id, encodedImages);
+        postId = await createGiveaway(
+          caption,
+          user.user_id,
+          encodedImages,
+          nooflikes
+        );
+        toast.success("Giveaway has been created.");
       } else {
         postId = await createPost(caption, user.user_id, encodedImages);
+        toast.success("Post has been created.");
       }
 
       console.log("Post created with ID:", postId);
-      toast.success("Post has been created.");
     } catch (error) {
       console.error("Error creating post:", error);
       toast.error("Failed to create post. Please try again.");

@@ -31,27 +31,35 @@ interface PostCardProps {
   image: ImageObject | null;
   user: string;
   createdAt: Date;
+  likesNeeded: number;
+  likess: number;
 }
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-function GiveawayCard({ caption, image, user, createdAt }: PostCardProps) {
+function GiveawayCard({
+  caption,
+  image,
+  user,
+  createdAt,
+  likesNeeded,
+  likess,
+}: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
-  const [likes, setLikes] = useState(5);
-  const [setNoOfLikes, setSetNoOfLikes] = useState(10);
+  const [likes, setLikes] = useState(likess);
 
-  const [progress, setProgress] = useState(25);
+  const [progress, setProgress] = useState((likes / likesNeeded) * 100);
   const handleHeartClick = () => {
     setIsLiked(!isLiked);
     if (!isLiked) {
       setLikes((prevLikes) => {
-        const newLikes = Math.min(prevLikes + 1, setNoOfLikes);
-        setProgress((newLikes / setNoOfLikes) * 100);
+        const newLikes = Math.min(prevLikes + 1, likesNeeded);
+        setProgress((newLikes / likesNeeded) * 100);
         return newLikes;
       });
     } else {
       setLikes((prevLikes) => {
         const newLikes = Math.max(prevLikes - 1, 0);
-        setProgress((newLikes / setNoOfLikes) * 100);
+        setProgress((newLikes / likesNeeded) * 100);
         return newLikes;
       });
     }
@@ -75,8 +83,8 @@ function GiveawayCard({ caption, image, user, createdAt }: PostCardProps) {
   };
   return (
     <>
-      <div className="mb-4  overflow-y-auto ">
-        <Card className="overflow-y-scroll " x-chunk="dashboard-05-chunk-4">
+      <div className="mb-4  ">
+        <Card className=" " x-chunk="dashboard-05-chunk-4">
           <CardHeader className="flex flex-row items-start bg-muted/50 p-4">
             <div className="grid gap-0.5">
               <CardTitle className="group flex items-center gap-2 ">
@@ -127,7 +135,7 @@ function GiveawayCard({ caption, image, user, createdAt }: PostCardProps) {
             <h3>Likes Counter</h3>
             <Progress value={progress} className="mb-4 mt-2 mr-2" />
             <h3>
-              {likes}/{setNoOfLikes}
+              {likes}/{likesNeeded}
             </h3>
           </div>
         </Card>
