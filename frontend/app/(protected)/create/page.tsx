@@ -15,10 +15,12 @@ import { createPost } from "@/actions/post";
 import { useAuthStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function page() {
   const [caption, setCaption] = useState<string>("");
   const [images, setImages] = useState<File[]>([]);
+  const [nooflikes, setNooflikes] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -27,7 +29,9 @@ function page() {
   const handleCaptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setCaption(e.target.value);
   };
-
+  const handleLikeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNooflikes(Number(e.target.value));
+  };
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const fileList = Array.from(e.target.files);
@@ -79,46 +83,101 @@ function page() {
   return (
     <div className="p-6 w-full">
       <h1 className=" text-2xl font-web3 font-bold mb-4">Create Post</h1>
-      <Card x-chunk="dashboard-04-chunk-1" className="w-full">
-        {/* <CardHeader>
+      <Tabs defaultValue="post">
+        <TabsList>
+          <TabsTrigger value="post">Post</TabsTrigger>
+          <TabsTrigger value="giveaway">Giveaway</TabsTrigger>
+        </TabsList>
+        <TabsContent value="post">
+          <Card x-chunk="dashboard-04-chunk-1" className="w-full">
+            {/* <CardHeader>
           <CardTitle className="text-xl">Caption</CardTitle>
           <CardDescription className="text-xs">
             Used as a description for your post.
           </CardDescription>
         </CardHeader> */}
-        <CardContent className="mt-4">
-          <form onSubmit={handleSubmit}>
-            <CardTitle className="text-xl">Caption</CardTitle>
-            <CardDescription className="text-xs mb-4">
-              Used as a description for your post.
-            </CardDescription>
-            <Textarea
-              placeholder="Type your Caption here."
-              name="caption"
-              value={caption}
-              onChange={handleCaptionChange}
-              className="mb-4"
-            />
+            <CardContent className="mt-4">
+              <form onSubmit={handleSubmit}>
+                <CardTitle className="text-xl">Caption</CardTitle>
+                <CardDescription className="text-xs mb-4">
+                  Used as a description for your post.
+                </CardDescription>
+                <Textarea
+                  placeholder="Type your Caption here."
+                  name="caption"
+                  value={caption}
+                  onChange={handleCaptionChange}
+                  className="mb-4"
+                />
 
-            <CardTitle className="text-xl mt-4">Image</CardTitle>
-            <CardDescription className="text-xs mb-4">
-              Upload an image for your post.
-            </CardDescription>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="mb-4"
-            />
+                <CardTitle className="text-xl mt-4">Image</CardTitle>
+                <CardDescription className="text-xs mb-4">
+                  Upload an image for your post.
+                </CardDescription>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="mb-4"
+                />
 
-            <CardFooter className="border-t p-0  py-4">
-              <Button type="submit" className="mt-4" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Post Now"}
-              </Button>
-            </CardFooter>
-          </form>
-        </CardContent>
-      </Card>
+                <CardFooter className="border-t p-0  py-4">
+                  <Button type="submit" className="mt-4" disabled={isLoading}>
+                    {isLoading ? "Creating..." : "Post Now"}
+                  </Button>
+                </CardFooter>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="giveaway">
+          <Card x-chunk="dashboard-04-chunk-1" className="w-full">
+            <CardContent className="mt-4">
+              <form onSubmit={handleSubmit}>
+                <CardTitle className="text-xl">Caption</CardTitle>
+                <CardDescription className="text-xs mb-4">
+                  Used as a description for your post.
+                </CardDescription>
+                <Textarea
+                  placeholder="Type your Caption here."
+                  name="caption"
+                  value={caption}
+                  onChange={handleCaptionChange}
+                  className="mb-4"
+                />
+
+                <CardTitle className="text-xl mt-4">Image</CardTitle>
+                <CardDescription className="text-xs mb-4">
+                  Upload an image for your post.
+                </CardDescription>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="mb-4"
+                />
+
+                <CardTitle className="text-xl mt-4">Target Likes</CardTitle>
+                <CardDescription className="text-xs mb-4">
+                  At how many likes the giveaway should occur
+                </CardDescription>
+                <Input
+                  type="number"
+                  className="mb-4"
+                  onChange={handleLikeChange}
+                  value={nooflikes}
+                />
+
+                <CardFooter className="border-t p-0  py-4">
+                  <Button type="submit" className="mt-4" disabled={isLoading}>
+                    {isLoading ? "Creating..." : "Post Now"}
+                  </Button>
+                </CardFooter>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
