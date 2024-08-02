@@ -195,7 +195,7 @@ export default function Profile() {
                 </CardFooter>
               </Card>
             </div>
-            <Tabs defaultValue="week" className="h-[50vh] flex flex-col">
+            <Tabs defaultValue="tipped" className="h-[50vh] flex flex-col">
               <div className="flex items-center">
                 <TabsList>
                   <TabsTrigger value="tipped">Tipped</TabsTrigger>
