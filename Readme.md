@@ -12,11 +12,11 @@ The project is divided into two main parts:
 
 ## Demo
 
-You can check out a live demo of our application [here](#).
+You can check out a live demo of our application [here](oktogram.ujwl.in).
 
 ## Video Walkthrough
 
-For a detailed walkthrough of the application and its features, watch our demo video [here](#).
+For a detailed walkthrough of the application and its features, watch our demo video [here](https://www.loom.com/share/206c6a24b17441f69c0fd72c78a0c95f?sid=97ea7591-853d-40bf-9663-87a8c3d3d2e0).
 
 ## About the Application
 
