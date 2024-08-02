@@ -1,5 +1,7 @@
 # OktoGram
 
+![Screenshot](frontend/public/images/mainscreen.png)
+
 ## Project Structure
 
 The project is divided into two main parts:
