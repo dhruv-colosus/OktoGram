@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Oktogram: A Web3 Social Media App
+
+Oktogram is a Next.js application that integrates Shadcn for UI components, Okto Wallet for cryptocurrency wallet functionality, and Google OAuth for user authentication. It is a Web3-based social media platform.
+
+## Features
+
+- **Modern UI**: An application built using the best modern UI practices
+- **Okto Auth**: Authentication using Okto Custodial Wallet
+- **Awarding Posts**: Awarding Posts using Okto Wallet directly to the Poster's Account
+- **Giveaways**: Giveaway Feature which gets triggered when a certain amount of likes is reached and someone random from the likers gets a Free NFT
 
 ## Getting Started
 
-First, run the development server:
+Follow the steps below to set up the project locally.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Make sure you have the following installed on your machine:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [Node.js](https://nodejs.org/) (version 14.x or later)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) (npm comes with Node.js)
+- [Git](https://git-scm.com/)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Installation
 
-## Learn More
+1. **Clone the repository**:
 
-To learn more about Next.js, take a look at the following resources:
+   ````bash
+   git clone https://github.com/dhruv-colosus/oktogram.git
+   cd oktogram```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ````
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+2. **Installing Dependencies**:
 
-## Deploy on Vercel
+   ````npm install
+    or
+    yarn install```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ````
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+3. **Setup environment variables:**:
+
+   `cp env.sample .env`
+
+DATABASE_URL="your-database-url"
+NEXT_PUBLIC_OKTO_CLIENT_API="your-okto-client-api"
+NEXT_PUBLIC_GOOGLE_CLIENT_ID="your-google-client-id"
+NEXT_PUBLIC_HOST="http://localhost:3000"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+OKTO_SERVER_API_KEY="your-okto-server-api-key"
+
+4. **Run it locally**:
+   `npm run dev `
