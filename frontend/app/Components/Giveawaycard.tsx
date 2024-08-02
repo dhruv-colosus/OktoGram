@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Bookmark,
@@ -36,8 +36,25 @@ interface PostCardProps {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 function GiveawayCard({ caption, image, user, createdAt }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(5);
+  const [setNoOfLikes, setSetNoOfLikes] = useState(10);
+
+  const [progress, setProgress] = useState(25);
   const handleHeartClick = () => {
     setIsLiked(!isLiked);
+    if (!isLiked) {
+      setLikes((prevLikes) => {
+        const newLikes = Math.min(prevLikes + 1, setNoOfLikes);
+        setProgress((newLikes / setNoOfLikes) * 100);
+        return newLikes;
+      });
+    } else {
+      setLikes((prevLikes) => {
+        const newLikes = Math.max(prevLikes - 1, 0);
+        setProgress((newLikes / setNoOfLikes) * 100);
+        return newLikes;
+      });
+    }
   };
 
   function getMinutesAgo(createdAt: Date): number {
@@ -104,12 +121,14 @@ function GiveawayCard({ caption, image, user, createdAt }: PostCardProps) {
             <Bookmark strokeWidth={1} className="cursor-pointer " />
           </CardFooter>
           <div className="flex bg-muted/50 px-6 pb-3 text-xs font-web3 text-gray-400 justify-between">
-            <p>25 Likes</p>
+            <p>{likes} Likes</p>
           </div>
           <div className="flex bg-muted/50 px-6 pb-3 text-xs font-web3 text-gray-400 justify-between items-center">
             <h3>Likes Counter</h3>
-            <Progress value={25} className="mb-4 mt-2 mr-2" />
-            <h3>25/100</h3>
+            <Progress value={progress} className="mb-4 mt-2 mr-2" />
+            <h3>
+              {likes}/{setNoOfLikes}
+            </h3>
           </div>
         </Card>
       </div>
