@@ -43,7 +43,7 @@ function PostCard({ caption, image, user, createdAt }: PostCardProps) {
   const handleHeartClick = () => {
     setIsLiked(!isLiked);
   };
-  console.log("image", image);
+
   function getMinutesAgo(createdAt: Date): number {
     const now = new Date();
     const differenceInMilliseconds = now.getTime() - createdAt.getTime();

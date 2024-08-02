@@ -8,6 +8,7 @@ import { OktoContextType, useOkto } from "okto-sdk-react";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store";
 import { registerUser } from "@/actions/auth";
+import axios from "axios";
 
 export default function ProtectedLayout({
   children,
@@ -16,7 +17,7 @@ export default function ProtectedLayout({
 }>) {
   const { authenticate, getUserDetails } = useOkto() as OktoContextType;
   const { accessToken, logout, setUser } = useAuthStore();
-  const [authDone, setAuthDone] = useState(false);
+  const [authToken, setAuthToken] = useState<string | null>(null);
   const router = useRouter();
 
   if (accessToken === null) {
@@ -29,7 +30,7 @@ export default function ProtectedLayout({
     authenticate(accessToken, async (result, error) => {
       if (result) {
         console.log("got auth", result);
-        setAuthDone(true);
+        setAuthToken(result.auth_token);
       }
       if (error) {
         console.error("authentication error:", error);
@@ -40,13 +41,26 @@ export default function ProtectedLayout({
   }, []);
 
   useEffect(() => {
-    if (!authDone) return;
+    if (!authToken) return;
 
     (async () => {
       try {
         const details = await getUserDetails();
-        console.log(details);
-        setUser({ user_id: details.user_id, email: details.email });
+        const wallets = await axios.post(
+          "https://sandbox-api.okto.tech/api/v1/wallet",
+          {},
+          {
+            headers: {
+              "x-api-key": process.env.NEXT_PUBLIC_OKTO_CLIENT_API!,
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+        setUser({
+          user_id: details.user_id,
+          email: details.email,
+          wallets: wallets.data.filter((w: any) => w.success),
+        });
         registerUser(details.user_id, details.email);
       } catch (e) {
         console.log(e);
@@ -54,7 +68,7 @@ export default function ProtectedLayout({
         router.push("/signin");
       }
     })();
-  }, [authDone]);
+  }, [authToken]);
 
   return (
     <div className="flex h-screen w-full">

@@ -1,9 +1,15 @@
 import { create } from "zustand";
 import { persist, devtools } from "zustand/middleware";
 
+interface IWallet {
+  address: string;
+  network: string;
+}
+
 interface IUser {
   user_id: string;
   email: string;
+  wallets: IWallet[];
 }
 
 interface IStore {
