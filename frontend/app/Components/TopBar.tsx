@@ -39,8 +39,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
 function TopBar() {
   const pathname = usePathname();
-
-  const { logout } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const router = useRouter();
 
   const getLinkClass = (href: string) => {
@@ -135,7 +134,7 @@ function TopBar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{user?.email} </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <Link href="/profile">
               <DropdownMenuItem>Profile</DropdownMenuItem>
