@@ -8,7 +8,7 @@ const makeApiCall =
   }: {
     method: string;
     url: string;
-  }): (({ data, params }: { data?: T; params?: U }) => Promise<V>) =>
+  }): (({ data, params }: { data: T; params: U }) => Promise<V>) =>
   async ({ data, params }) => {
     let res;
     try {
