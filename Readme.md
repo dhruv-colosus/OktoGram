@@ -12,7 +12,7 @@ The project is divided into two main parts:
 
 ## Demo
 
-You can check out a live demo of our application [here](oktogram.ujwl.in).
+You can check out a live demo of our application [here](https://oktogram.ujwl.in).
 
 ## Video Walkthrough
 
