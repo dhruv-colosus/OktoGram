@@ -1,4 +1,4 @@
-# Social Media Web3 Application
+# OktoGram
 
 ## Project Structure
 

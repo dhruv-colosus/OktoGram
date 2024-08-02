@@ -65,6 +65,7 @@ function page() {
       );
       var postId;
       if (nooflikes) {
+        postId = await createPost(caption, user.user_id, encodedImages);
       } else {
         postId = await createPost(caption, user.user_id, encodedImages);
       }
