@@ -11,6 +11,7 @@ import {
   Package,
   Settings,
   ShoppingCart,
+  UserRound,
   Users,
 } from "lucide-react";
 
@@ -73,6 +74,10 @@ function SideBar() {
               <Link href="/wallet" className={getLinkClass("/wallet")}>
                 <Settings className="h-4 w-4" />
                 Wallet
+              </Link>
+              <Link href="/profile" className={getLinkClass("/profile")}>
+                <UserRound className="h-4 w-4" />
+                Profile
               </Link>
             </nav>
           </div>

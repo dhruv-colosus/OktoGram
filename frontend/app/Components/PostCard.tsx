@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import {
   Bookmark,
+  Gem,
   Heart,
   MessageCircle,
   MoreHorizontal,
@@ -23,7 +24,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 interface ImageObject {
   content: string;
   id: string;
@@ -52,7 +73,14 @@ function PostCard({ caption, image, user, createdAt }: PostCardProps) {
     );
     return differenceInMinutes;
   }
-
+  const [loading, setLoading] = useState(false);
+  const awardfunc = async () => {
+    setLoading(true);
+    setTimeout(() => {
+      console.log("hello");
+    }, 1000);
+    setLoading(false);
+  };
   return (
     <>
       <div className="mb-4 w-1/2 overflow-y-auto ">
@@ -76,6 +104,70 @@ function PostCard({ caption, image, user, createdAt }: PostCardProps) {
               </CardTitle>
             </div>
             <div className="ml-auto flex items-center gap-1">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Gem className="cursor-pointer mr-4 hover:text-red-400 transition delay-75" />
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[625px]">
+                  <DialogHeader>
+                    <DialogTitle>Award User</DialogTitle>
+                    <DialogDescription>
+                      Send Tokens as a reward to the user if you super like the
+                      content
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="name" className="text-right">
+                        Network
+                      </Label>
+                      <Select>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select Network" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Solana">Solana</SelectItem>
+                          <SelectItem value="Polygon">Polygon</SelectItem>
+                          <SelectItem value="Ethereum">Ethereum</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="username" className="text-right">
+                        Token
+                      </Label>
+                      <Select>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select Token" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Solana">SOL</SelectItem>
+                          <SelectItem value="Polygon">ETH</SelectItem>
+                          <SelectItem value="Ethereum">MATIC</SelectItem>
+                          <SelectItem value="Ethereum">USDC</SelectItem>
+                          <SelectItem value="Ethereum">USDT</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="username" className="text-right">
+                        Amount in USD
+                      </Label>
+                      <Input
+                        id="username"
+                        defaultValue="$0"
+                        className="col-span-3"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit" onClick={awardfunc}>
+                      Award
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button size="icon" variant="outline" className="h-8 w-8">

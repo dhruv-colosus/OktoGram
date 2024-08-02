@@ -64,8 +64,8 @@ export default function ProtectedLayout({
         registerUser(details.user_id, details.email);
       } catch (e) {
         console.log(e);
-        logout();
-        router.push("/signin");
+        // logout();
+        // router.push("/signin");
       }
     })();
   }, [authToken]);

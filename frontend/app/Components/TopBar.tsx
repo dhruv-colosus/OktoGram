@@ -93,9 +93,9 @@ function TopBar() {
                 <CirclePlus className="h-5 w-5" />
                 Create post
               </Link>
-              <Link href="/settings" className={getLinkClass("/settings")}>
+              <Link href="/profile" className={getLinkClass("/profile")}>
                 <Settings className="h-5 w-5" />
-                Settings
+                My Profile
               </Link>
             </nav>
             <div className="mt-auto">
@@ -137,8 +137,8 @@ function TopBar() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Link href="/settings">
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+            <Link href="/profile">
+              <DropdownMenuItem>Profile</DropdownMenuItem>
             </Link>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
