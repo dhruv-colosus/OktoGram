@@ -63,8 +63,11 @@ function page() {
           });
         })
       );
-
-      const postId = await createPost(caption, user.user_id, encodedImages);
+      var postId;
+      if (nooflikes) {
+      } else {
+        postId = await createPost(caption, user.user_id, encodedImages);
+      }
 
       console.log("Post created with ID:", postId);
       toast.success("Post has been created.");

@@ -70,7 +70,7 @@ export default function Profile() {
         setTotalTips({ in: totalIn * 0.49, out: totalOut * 0.49 });
       })
       .catch(() => {
-        toast.error("An unknown error occured");
+        toast.error("Insufficient Funds in Wallet");
       });
 
     getPortfolio()
