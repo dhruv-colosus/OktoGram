@@ -41,14 +41,20 @@ Make sure you have the following installed on your machine:
 
 3. **Setup environment variables:**:
 
-   `cp env.sample .env`
+   ```
+   cp env.sample .env
 
-DATABASE_URL="your-database-url"
+   ```
+
+```DATABASE_URL="your-database-url"
 NEXT_PUBLIC_OKTO_CLIENT_API="your-okto-client-api"
 NEXT_PUBLIC_GOOGLE_CLIENT_ID="your-google-client-id"
 NEXT_PUBLIC_HOST="http://localhost:3000"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
 OKTO_SERVER_API_KEY="your-okto-server-api-key"
+```
 
 4. **Run it locally**:
-   `npm run dev `
+   ```
+   npm run dev
+   ```
