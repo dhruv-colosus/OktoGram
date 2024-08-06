@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { OktoProvider, BuildType } from "okto-sdk-react";
 import { cn } from "@/lib/utils";
 import RootProviders from "./Components/root-providers";
 import { Toaster } from "@/components/ui/sonner";

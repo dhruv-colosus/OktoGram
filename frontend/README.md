@@ -25,19 +25,19 @@ Make sure you have the following installed on your machine:
 
 1. **Clone the repository**:
 
-   ````bash
+   ```bash
    git clone https://github.com/dhruv-colosus/oktogram.git
-   cd oktogram```
+   cd oktogram
 
-   ````
+   ```
 
 2. **Installing Dependencies**:
 
-   ````npm install
+   ```npm install
     or
-    yarn install```
+    yarn install
 
-   ````
+   ```
 
 3. **Setup environment variables:**:
 
@@ -46,7 +46,8 @@ Make sure you have the following installed on your machine:
 
    ```
 
-```DATABASE_URL="your-database-url"
+```DATABASE_URL="your-neon-database-url"
+
 NEXT_PUBLIC_OKTO_CLIENT_API="your-okto-client-api"
 NEXT_PUBLIC_GOOGLE_CLIENT_ID="your-google-client-id"
 NEXT_PUBLIC_HOST="http://localhost:3000"
@@ -54,7 +55,19 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
 OKTO_SERVER_API_KEY="your-okto-server-api-key"
 ```
 
-4. **Run it locally**:
+**_Make sure to use the Neon.tech connection string you copied earlier for the DATABASE_URL._**
+
+4. **Setup Prisma**:
+
+   ```
+   npx prisma init
+   npx prisma generate
+   npx prisma migrate dev --name init
+
+
+   ```
+
+5. **Run it locally**:
    ```
    npm run dev
    ```
