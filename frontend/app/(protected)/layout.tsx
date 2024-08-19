@@ -9,16 +9,18 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store";
 import { registerUser } from "@/actions/auth";
 import axios from "axios";
+import { toast } from "sonner";
 
 export default function ProtectedLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { authenticate, getUserDetails, getSupportedTokens } =
+  const { authenticate, getUserDetails, getSupportedTokens, getWallets } =
     useOkto() as OktoContextType;
-  const { accessToken, logout, setUser } = useAuthStore();
-  const [authToken, setAuthToken] = useState<string | null>(null);
+  const { accessToken, logout, setUser, authToken, setAuthToken, user } =
+    useAuthStore();
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   if (accessToken === null) {
@@ -26,53 +28,68 @@ export default function ProtectedLayout({
   }
 
   useEffect(() => {
-    if (!accessToken) return;
-    console.log("authenticating...");
+    setAuthToken(null);
+  }, [setAuthToken]);
+
+  useEffect(() => {
+    if (authToken || !accessToken || loading) return;
+
+    console.log("authenticating...", accessToken, authToken, loading);
+    setLoading(true);
     authenticate(accessToken, async (result, error) => {
       if (result) {
         console.log("got auth", result);
         setAuthToken(result.auth_token);
+        setLoading(false);
       }
       if (error) {
         console.error("authentication error:", error);
+        toast.error("Error getting auth token from Okto");
         logout();
         router.push("/signin");
       }
     });
-  }, []);
+  }, [
+    accessToken,
+    authenticate,
+    logout,
+    router,
+    loading,
+    setAuthToken,
+    authToken,
+  ]);
 
   useEffect(() => {
-    if (!authToken) return;
+    if (!authToken || loading) return;
 
+    setLoading(true);
     (async () => {
       try {
         const details = await getUserDetails();
-        const wallets = await axios.post(
-          "https://sandbox-api.okto.tech/api/v1/wallet",
-          {},
-          {
-            headers: {
-              "x-api-key": process.env.NEXT_PUBLIC_OKTO_CLIENT_API!,
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
+        const wallets = await getWallets();
         const tokens = await getSupportedTokens();
+
+        console.log(wallets);
 
         setUser({
           user_id: details.user_id,
           email: details.email,
-          wallets: wallets.data.data.wallets.filter((w: any) => w.success),
+          wallets: wallets.wallets,
           tokens: tokens.tokens,
         });
-        registerUser(details.user_id, details.email);
       } catch (e) {
         console.log(e);
-        // logout();
-        // router.push("/signin");
       }
     })();
-  }, [authToken]);
+  }, [
+    authToken,
+    getSupportedTokens,
+    getUserDetails,
+    getWallets,
+    setUser,
+    user,
+    loading,
+  ]);
 
   return (
     <div className="flex h-screen w-full">

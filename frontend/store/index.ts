@@ -16,9 +16,11 @@ interface IUser {
 
 interface IStore {
   accessToken: string | null;
+  authToken: string | null;
   user: IUser | null;
-  setUser: (user: IUser) => void;
+  setUser: (user: IUser | null) => void;
   setAccessToken: (tok: string) => void;
+  setAuthToken: (tok: string | null) => void;
   logout: () => void;
 }
 
@@ -27,9 +29,13 @@ export const useAuthStore = create<IStore>()(
     persist(
       (set, get) => ({
         accessToken: null,
+        authToken: null,
         user: null,
         setAccessToken(tok) {
           set({ accessToken: tok });
+        },
+        setAuthToken(tok) {
+          set({ authToken: tok });
         },
         setUser(user) {
           set({ user });

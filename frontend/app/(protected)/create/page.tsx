@@ -11,13 +11,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { createGiveaway, createPost } from "@/actions/post";
+import { createGiveaway } from "@/actions/post";
 import { useAuthStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { createPost } from "@/lib/contract";
 
-function page() {
+function Page() {
   const [caption, setCaption] = useState<string>("");
   const [images, setImages] = useState<File[]>([]);
   const [nooflikes, setNooflikes] = useState<number>(0);
@@ -73,7 +74,11 @@ function page() {
         );
         toast.success("Giveaway has been created.");
       } else {
-        postId = await createPost(caption, user.user_id, encodedImages);
+        await createPost(
+          caption,
+          "https://www.ie.edu/insights/wp-content/uploads/2022/01/San-Jose-Feature.jpg"
+        );
+        // postId = await createPost(caption, user.user_id, encodedImages);
         toast.success("Post has been created.");
       }
 
@@ -192,4 +197,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

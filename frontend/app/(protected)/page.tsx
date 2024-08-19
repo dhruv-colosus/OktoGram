@@ -6,18 +6,16 @@ import PostCard from "../Components/PostCard";
 import FriendsRec from "../Components/FriendsRec";
 
 import { useEffect, useState } from "react";
-import { getPosts } from "@/actions/post";
+import { getPosts } from "@/lib/contract";
 
 export default function Home() {
   const [posts, setPosts] = useState<any[]>([]);
-  useEffect(() => {
-    const fetchposts = async () => {
-      const posts = await getPosts({ skip: 0, take: 50 });
-      console.log("posts are :", posts);
-      setPosts(posts);
-    };
 
-    fetchposts();
+  useEffect(() => {
+    getPosts().then((posts) => {
+      console.log(posts);
+      setPosts((posts as any[]).toReversed());
+    });
   }, []);
 
   return (
@@ -30,16 +28,15 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center">
             {posts?.map((post) => {
               return (
-                <>
-                  <PostCard
-                    postId={post?.id}
-                    caption={post?.content}
-                    image={post?.Image[0]}
-                    user={post?.author.email}
-                    createdAt={post?.createdAt}
-                    likes={post?._count?.Like}
-                  />
-                </>
+                <PostCard
+                  key={post.id.toString()}
+                  postId={post.id.toString()}
+                  caption={post.content}
+                  image={post.image}
+                  user={post.author}
+                  createdAt={post.createdAt.toString()}
+                  likes={post.likes}
+                />
               );
             })}
           </div>

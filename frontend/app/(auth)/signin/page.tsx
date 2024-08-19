@@ -24,7 +24,7 @@ export default function SignIn() {
 
   useEffect(() => {
     logOut();
-  }, []);
+  }, [logOut]);
 
   return (
     <div className="flex h-screen justify-center items-center">

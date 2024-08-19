@@ -55,7 +55,7 @@ interface PostCardProps {
   caption: string;
   image: ImageObject | null;
   user: string;
-  createdAt: Date;
+  createdAt: string;
   postId: string;
   likes: number;
 }
@@ -97,9 +97,9 @@ function PostCard({
   const [amountVal, setAmountVal] = useState<number>(0);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  function getMinutesAgo(createdAt: Date): number {
+  function getMinutesAgo(createdAt: string): number {
     const now = new Date();
-    const differenceInMilliseconds = now.getTime() - createdAt.getTime();
+    const differenceInMilliseconds = (10900000 - parseInt(createdAt)) * 2000; // TODO current block global state
     const differenceInMinutes = Math.floor(
       differenceInMilliseconds / (1000 * 60)
     );
@@ -209,8 +209,11 @@ function PostCard({
                           <SelectValue placeholder="Select Network" />
                         </SelectTrigger>
                         <SelectContent>
-                          {(tipNetworks ?? []).map((tipNetwork) => (
-                            <SelectItem value={tipNetwork.network_name}>
+                          {(tipNetworks ?? []).map((tipNetwork, idx) => (
+                            <SelectItem
+                              key={idx}
+                              value={tipNetwork.network_name}
+                            >
                               {toNetworkName(tipNetwork.network_name)}
                             </SelectItem>
                           ))}
@@ -229,8 +232,9 @@ function PostCard({
                           <SelectValue placeholder="Select Token" />
                         </SelectTrigger>
                         <SelectContent>
-                          {availTokens.map((availToken) => (
+                          {availTokens.map((availToken, idx) => (
                             <SelectItem
+                              key={idx}
                               value={availToken.token_address || "NATIVE"}
                             >
                               {availToken.token_name}
@@ -283,7 +287,7 @@ function PostCard({
 
           <CardContent className="text-sm p-0 flex items-center justify-center max-h-[500px]">
             <img
-              src={image?.content}
+              src={image}
               className="w-full h-auto max-h-[500px] object-cover"
             />
           </CardContent>
