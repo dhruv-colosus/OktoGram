@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 import {
   Select,
@@ -82,9 +83,16 @@ function PostCard({
   createdAt,
   likes,
 }: PostCardProps) {
+  const router = useRouter();
+
   const [isLiked, setIsLiked] = useState(false);
+  const [isBookMark, setisBookMark] = useState(false);
   const handleHeartClick = () => {
     setIsLiked(!isLiked);
+  };
+
+  const handleBookMarkClick = () => {
+    setisBookMark(!isBookMark);
   };
   const [tipNetworks, setTipNetworks] = useState<Wallet[] | null>(null);
   const [availTokens, setAvailTokens] = useState<Token[]>([]);
@@ -168,7 +176,12 @@ function PostCard({
           <CardHeader className="flex flex-row items-start bg-muted/50 p-4">
             <div className="grid gap-0.5">
               <CardTitle className="group flex items-center gap-2 ">
-                <Avatar>
+                <Avatar
+                  className=" cursor-pointer"
+                  onClick={() => {
+                    router.push(`/user/${user}`);
+                  }}
+                >
                   <AvatarImage
                     src="https://github.com/shadcn.png"
                     alt="@shadcn"
@@ -176,7 +189,14 @@ function PostCard({
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div>
-                  <span className="font-web3 text-xl">{user}</span>
+                  <span
+                    className="font-web3 text-xl cursor-pointer"
+                    onClick={() => {
+                      router.push(`/user/${user}`);
+                    }}
+                  >
+                    {user.slice(0, 20)}
+                  </span>
                   <p className="text-xs text-gray-400">
                     Posted {getMinutesAgo(createdAt)} mins ago
                   </p>
@@ -302,16 +322,20 @@ function PostCard({
                   } cursor-pointer `}
                   onClick={handleHeartClick}
                 />
-                <MessageCircle strokeWidth={1} className="cursor-pointer" />
+
                 <Share2 strokeWidth={1} className="cursor-pointer" />
               </div>
               <p className="text-xs mt-3 font-web3"> {caption}</p>
             </div>
-            <Bookmark strokeWidth={1} className="cursor-pointer " />
+            <Bookmark
+              fill={isBookMark ? "currentColor" : "none"}
+              strokeWidth={1}
+              className={`${isBookMark ? "text-white" : ""} cursor-pointer `}
+              onClick={handleBookMarkClick}
+            />
           </CardFooter>
           <div className="flex bg-muted/50 px-6 pb-3 text-xs font-web3 text-gray-400 justify-between">
             <p>{likes} Likes</p>
-            <p>2 Comments</p>
           </div>
         </Card>
       </div>

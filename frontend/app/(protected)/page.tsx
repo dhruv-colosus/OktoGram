@@ -24,7 +24,9 @@ export default function Home() {
         <div className=" p-5 ">
           <h2 className="font-web3 font-bold text-2xl mb-4">Latest Stories</h2>
           <Stories />
-          <h2 className="font-web3 font-bold text-2xl mb-4 mt-8 ">New Posts</h2>
+          <h2 className="font-web3 font-bold text-2xl mb-4 mt-8 ">
+            New Posts from Friends
+          </h2>
           <div className="flex flex-col items-center justify-center">
             {posts?.map((post) => {
               return (

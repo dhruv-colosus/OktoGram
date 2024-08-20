@@ -65,7 +65,14 @@ function Page() {
         })
       );
       var postId;
-      if (nooflikes) {
+      if (!caption) {
+        // await createStory(
+        //   caption,
+        //   "https://www.ie.edu/insights/wp-content/uploads/2022/01/San-Jose-Feature.jpg"
+        // );
+        // // postId = await createPost(caption, user.user_id, encodedImages);
+        // toast.success("Story has been Uploaded.");
+      } else if (nooflikes) {
         postId = await createGiveaway(
           caption,
           user.user_id,
@@ -102,6 +109,7 @@ function Page() {
         <TabsList>
           <TabsTrigger value="post">Post</TabsTrigger>
           <TabsTrigger value="giveaway">Giveaway</TabsTrigger>
+          <TabsTrigger value="stories">Stories</TabsTrigger>
         </TabsList>
         <TabsContent value="post">
           <Card x-chunk="dashboard-04-chunk-1" className="w-full">
@@ -181,6 +189,36 @@ function Page() {
                   className="mb-4"
                   onChange={handleLikeChange}
                   value={nooflikes}
+                />
+
+                <CardFooter className="border-t p-0  py-4">
+                  <Button type="submit" className="mt-4" disabled={isLoading}>
+                    {isLoading ? "Creating..." : "Post Now"}
+                  </Button>
+                </CardFooter>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="stories">
+          <Card x-chunk="dashboard-04-chunk-1" className="w-full">
+            {/* <CardHeader>
+          <CardTitle className="text-xl">Caption</CardTitle>
+          <CardDescription className="text-xs">
+            Used as a description for your post.
+          </CardDescription>
+        </CardHeader> */}
+            <CardContent className="mt-4">
+              <form onSubmit={handleSubmit}>
+                <CardTitle className="text-xl mt-4">Story Image</CardTitle>
+                <CardDescription className="text-xs mb-4">
+                  Upload an image for your post.
+                </CardDescription>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="mb-4"
                 />
 
                 <CardFooter className="border-t p-0  py-4">
