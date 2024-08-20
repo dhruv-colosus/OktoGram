@@ -7,8 +7,6 @@ import TopBar from "../Components/TopBar";
 import { OktoContextType, useOkto } from "okto-sdk-react";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store";
-import { registerUser } from "@/actions/auth";
-import axios from "axios";
 import { toast } from "sonner";
 
 export default function ProtectedLayout({

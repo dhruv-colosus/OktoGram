@@ -54,7 +54,7 @@ interface ImageObject {
 
 interface PostCardProps {
   caption: string;
-  image: ImageObject | null;
+  image: string;
   user: string;
   createdAt: string;
   postId: string;
@@ -309,6 +309,7 @@ function PostCard({
             <img
               src={image}
               className="w-full h-auto max-h-[500px] object-cover"
+              alt="post image"
             />
           </CardContent>
           <CardFooter className="flex flex-row items-start border-t bg-muted/50 px-6 py-3 justify-between">
