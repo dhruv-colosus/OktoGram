@@ -13,8 +13,16 @@ export default function Home() {
 
   useEffect(() => {
     getPosts().then((posts) => {
-      console.log(posts);
-      setPosts((posts as any[]).toReversed());
+      console.log(
+        (posts as any[])
+          .toSorted((a, b) => Number(a.createdAt) - Number(b.createdAt))
+          .filter((post) => !post.isGiveaway)
+      );
+      setPosts(
+        (posts as any[])
+          .toSorted((a, b) => Number(b.createdAt) - Number(a.createdAt))
+          .filter((post) => !post.isGiveaway)
+      );
     });
   }, []);
 
@@ -35,7 +43,7 @@ export default function Home() {
                   postId={post.id.toString()}
                   caption={post.content}
                   image={post.image}
-                  user={post.author}
+                  user={post.user}
                   createdAt={post.createdAt.toString()}
                   likes={post.likes}
                 />

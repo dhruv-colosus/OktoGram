@@ -26,7 +26,6 @@ model Post {
   authorId     String
   author       User          @relation(fields: [authorId], references: [id])
   GiveawayPost GiveawayPost?
-  Image        Image[]
   Like         Like[]
   Tip          Tip[]
 }
@@ -43,8 +42,6 @@ model GiveawayPost {
 model Image {
   id      String @id @default(uuid())
   content String
-  postId  String
-  post    Post   @relation(fields: [postId], references: [id])
 }
 
 model Like {

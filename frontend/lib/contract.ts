@@ -20,7 +20,28 @@ const instance = axios.create({
   },
 });
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const tle_cache = <Args extends unknown[], ReturnType>(
+  func: (...args: Args) => ReturnType,
+  cache_ms: number
+) => {
+  let lastRefreshed = 0;
+  let cachedVal: ReturnType;
+
+  return (...args: Args) => {
+    if (Date.now() - lastRefreshed > cache_ms) {
+      lastRefreshed = Date.now();
+      cachedVal = func(...args);
+    }
+    return cachedVal;
+  };
+};
+
+export const getBlockNumber = tle_cache(async () => {
+  return web3.eth.getBlockNumber();
+}, 30 * 1000);
+
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 const callFunction = async (func: string, value: string, args: any) => {
   const from = getTestnetAddress();
@@ -95,11 +116,27 @@ const getTestnetAddress = () => {
 
 export const getPosts = async () => {
   const res = await contract.methods.getAllPosts().call();
-  return res
+  return res;
 };
 
-export const createPost = async (content: string, imageUrl: string) => {
-  await callFunction("createPost", "0x0", [imageUrl, content]);
+export const getStories = async () => {
+  const res = await contract.methods.getAllStories().call();
+  return res;
+};
+
+export const createPost = async (content: string, imageId: string) => {
+  await callFunction("createPost", "0x0", [
+    useAuthStore.getState().user?.email || "user",
+    imageId,
+    content,
+  ]);
+};
+
+export const createStory = async (imageId: string) => {
+  await callFunction("createStory", "0x0", [
+    useAuthStore.getState().user?.email || "user",
+    imageId,
+  ]);
 };
 
 export const createGiveawayPost = async (

@@ -16,16 +16,20 @@ import { useEffect } from "react";
 
 export default function SignIn() {
   const { logOut } = useOkto() as OktoContextType;
-  const { accessToken, setAccessToken, logout } = useAuthStore();
+  const { accessToken, setAccessToken, logout, _hasHydrated } = useAuthStore();
   const router = useRouter();
-  if (accessToken) {
-    router.replace("/");
-  }
-
   useEffect(() => {
     logOut();
     logout();
   }, [logOut, logout]);
+
+  useEffect(() => {
+    if (!_hasHydrated) return;
+
+    if (accessToken) {
+      router.replace("/");
+    }
+  }, [accessToken, router, _hasHydrated]);
 
   return (
     <div className="flex h-screen justify-center items-center">

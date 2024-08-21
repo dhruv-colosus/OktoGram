@@ -8,6 +8,7 @@ import { OktoContextType, useOkto } from "okto-sdk-react";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store";
 import { toast } from "sonner";
+import { sleep } from "@/lib/contract";
 
 export default function ProtectedLayout({
   children,
@@ -16,18 +17,25 @@ export default function ProtectedLayout({
 }>) {
   const { authenticate, getUserDetails, getSupportedTokens, getWallets } =
     useOkto() as OktoContextType;
-  const { accessToken, logout, setUser, authToken, setAuthToken, user } =
-    useAuthStore();
+  const {
+    _hasHydrated,
+    accessToken,
+    logout,
+    setUser,
+    authToken,
+    setAuthToken,
+    user,
+  } = useAuthStore();
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  if (accessToken === null) {
-    router.push("/signin");
-  }
-
   useEffect(() => {
-    setAuthToken(null);
-  }, [setAuthToken]);
+    if (!_hasHydrated) return;
+    
+    if (accessToken === null) {
+      router.push("/signin");
+    }
+  }, [accessToken, router, _hasHydrated]);
 
   useEffect(() => {
     if (authToken || !accessToken || loading) return;
@@ -63,6 +71,8 @@ export default function ProtectedLayout({
     setLoading(true);
     (async () => {
       try {
+        console.log("getting details");
+
         const details = await getUserDetails();
         const wallets = await getWallets();
         const tokens = await getSupportedTokens();

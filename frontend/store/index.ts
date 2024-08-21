@@ -21,7 +21,10 @@ interface IStore {
   setUser: (user: IUser | null) => void;
   setAccessToken: (tok: string) => void;
   setAuthToken: (tok: string | null) => void;
+  isLoggedIn: () => boolean;
   logout: () => void;
+
+  _hasHydrated: boolean;
 }
 
 export const useAuthStore = create<IStore>()(
@@ -31,6 +34,7 @@ export const useAuthStore = create<IStore>()(
         accessToken: null,
         authToken: null,
         user: null,
+        _hasHydrated: false,
         setAccessToken(tok) {
           set({ accessToken: tok });
         },
@@ -40,11 +44,27 @@ export const useAuthStore = create<IStore>()(
         setUser(user) {
           set({ user });
         },
+        isLoggedIn() {
+          return get().accessToken !== null;
+        },
         logout() {
           set({ accessToken: null, user: null });
         },
       }),
-      { name: "auth-store" }
+      {
+        name: "auth-store",
+        partialize: (state) =>
+          Object.fromEntries(
+            Object.entries(state).filter(
+              ([key]) => !["authToken", "_hasHydrated"].includes(key)
+            )
+          ),
+        onRehydrateStorage: () => (state) => {
+          if (state) {
+            state._hasHydrated = true;
+          }
+        },
+      }
     ),
     { enabled: process.env.NODE_ENV !== "production" }
   )

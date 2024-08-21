@@ -8,9 +8,14 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 contract Oktogram is Ownable(msg.sender) {
     using EnumerableSet for EnumerableSet.AddressSet;
 
+    struct User {
+        address author;
+        string name;
+    }
+
     struct Post {
         uint256 id;
-        address author;
+        User user;
         string image;
         string content;
         uint256 createdAt;
@@ -23,18 +28,43 @@ contract Oktogram is Ownable(msg.sender) {
         uint256 targetLikes;
     }
 
+    struct Story {
+        uint256 id;
+        User user;
+        string image;
+        uint256 createdAt;
+    }
+
     uint256 private _postCounter = 0;
+    uint256 private _storyCounter = 0;
     mapping(uint256 => Post) _posts;
+    mapping(uint256 => Story) _stories;
     mapping(uint256 => mapping(address => uint256)) _tips;
     mapping(uint256 => EnumerableSet.AddressSet) _likers;
+    mapping(address => User[]) _friends;
 
-    function createPost(string memory image, string memory content) public {
+    function createStory(string memory username, string memory image) public {
+        _storyCounter++;
+        uint256 storyId = _storyCounter;
+
+        Story storage newStory = _stories[storyId];
+        newStory.id = storyId;
+        newStory.user = User({author: msg.sender, name: username});
+        newStory.image = image;
+        newStory.createdAt = block.number;
+    }
+
+    function createPost(
+        string memory username,
+        string memory image,
+        string memory content
+    ) public {
         _postCounter++;
         uint256 postId = _postCounter;
 
         Post storage newPost = _posts[postId];
         newPost.id = postId;
-        newPost.author = msg.sender;
+        newPost.user = User({author: msg.sender, name: username});
         newPost.image = image;
         newPost.content = content;
         newPost.createdAt = block.number;
@@ -45,6 +75,7 @@ contract Oktogram is Ownable(msg.sender) {
     }
 
     function createGiveawayPost(
+        string memory username,
         string memory image,
         string memory content,
         address nftAddress,
@@ -61,7 +92,7 @@ contract Oktogram is Ownable(msg.sender) {
 
         Post storage newPost = _posts[postId];
         newPost.id = postId;
-        newPost.author = msg.sender;
+        newPost.user = User({author: msg.sender, name: username});
         newPost.image = image;
         newPost.content = content;
         newPost.createdAt = block.number;
@@ -77,7 +108,7 @@ contract Oktogram is Ownable(msg.sender) {
 
     function toggleLike(uint256 postId) public {
         Post storage post = _posts[postId];
-        require(post.author != address(0), "Post does not exist");
+        require(post.user.author != address(0), "Post does not exist");
         if (_likers[postId].contains(msg.sender)) {
             _likers[postId].remove(msg.sender);
             post.likes--;
@@ -99,7 +130,7 @@ contract Oktogram is Ownable(msg.sender) {
         require(post.isGiveaway, "Not a giveaway post");
         require(post.likes >= post.targetLikes, "Target likes not reached");
         require(!post.giveawayCompleted, "Giveaway has been completed");
-
+                
         // TODO random
     }
 
@@ -111,4 +142,15 @@ contract Oktogram is Ownable(msg.sender) {
 
         return allPosts;
     }
+
+    function getAllStories() external view returns (Story[] memory) {
+        Story[] memory allStories = new Story[](_storyCounter);
+        for (uint256 i = 1; i <= _storyCounter; i++) {
+            allStories[i - 1] = _stories[i];
+        }
+
+        return allStories;
+    }
+
+    function addFriend() external {}
 }

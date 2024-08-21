@@ -33,7 +33,7 @@ export default function Home() {
                   postId={post.id.toString()}
                   caption={post.content}
                   image={post.image}
-                  user={post.author}
+                  user={post.user}
                   createdAt={post.createdAt.toString()}
                   likes={post.likes}
                 />

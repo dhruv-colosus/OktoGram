@@ -20,19 +20,14 @@ import {
 
 import { Progress } from "@/components/ui/progress";
 
-interface ImageObject {
-  content: string;
-  id: string;
-  postId: string;
-}
-
 interface PostCardProps {
+  postId: string;
   caption: string;
-  image: ImageObject | null;
+  image: string;
   user: string;
   createdAt: Date;
   likesNeeded: number;
-  likess: number;
+  likes: number;
 }
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -42,10 +37,10 @@ function GiveawayCard({
   user,
   createdAt,
   likesNeeded,
-  likess,
+  likes: originalLikes,
 }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
-  const [likes, setLikes] = useState(likess);
+  const [likes, setLikes] = useState(originalLikes);
 
   const [progress, setProgress] = useState((likes / likesNeeded) * 100);
   const handleHeartClick = () => {
@@ -107,8 +102,9 @@ function GiveawayCard({
 
           <CardContent className="text-sm p-0 flex items-center justify-center max-h-[500px]">
             <img
-              src={image?.content}
+              src={`/api/image?id=${image}`}
               className="w-full h-auto max-h-[500px] object-cover"
+              alt="giveaway image"
             />
           </CardContent>
           <CardFooter className="flex flex-row items-start border-t bg-muted/50 px-6 py-3 justify-between">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Bookmark,
@@ -55,7 +55,7 @@ interface ImageObject {
 interface PostCardProps {
   caption: string;
   image: string;
-  user: string;
+  user: { author: string; name: string };
   createdAt: string;
   postId: string;
   likes: number;
@@ -66,6 +66,7 @@ import { getPostTipNetworks, storeTip } from "@/actions/post";
 import { useAuthStore } from "@/store";
 import { OktoContextType, Token, Wallet, useOkto } from "okto-sdk-react";
 import { toast } from "sonner";
+import { getBlockNumber } from "@/lib/contract";
 
 const toNetworkName = (capsName: string) => {
   return capsName
@@ -83,6 +84,8 @@ function PostCard({
   createdAt,
   likes,
 }: PostCardProps) {
+  console.log(postId, caption, image, user, createdAt, likes);
+
   const router = useRouter();
 
   const [isLiked, setIsLiked] = useState(false);
@@ -90,6 +93,7 @@ function PostCard({
   const handleHeartClick = () => {
     setIsLiked(!isLiked);
   };
+  const [blockTime, setBlockTime] = useState(Infinity);
 
   const handleBookMarkClick = () => {
     setisBookMark(!isBookMark);
@@ -105,9 +109,9 @@ function PostCard({
   const [amountVal, setAmountVal] = useState<number>(0);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  function getMinutesAgo(createdAt: string): number {
+  function getMinutesAgo(blockTime: number, createdAt: string): number {
     const now = new Date();
-    const differenceInMilliseconds = (10900000 - parseInt(createdAt)) * 2000; // TODO current block global state
+    const differenceInMilliseconds = (blockTime - parseInt(createdAt)) * 2000; // TODO current block global state
     const differenceInMinutes = Math.floor(
       differenceInMilliseconds / (1000 * 60)
     );
@@ -169,6 +173,12 @@ function PostCard({
     );
   };
 
+  useEffect(() => {
+    getBlockNumber().then((num) => {
+      setBlockTime(Number(num));
+    });
+  }, []);
+
   return (
     <>
       <div className="mb-4 w-1/2 overflow-y-auto ">
@@ -195,10 +205,10 @@ function PostCard({
                       router.push(`/user/${user}`);
                     }}
                   >
-                    {user.slice(0, 20)}
+                    {user.name.slice(0, 20)}
                   </span>
                   <p className="text-xs text-gray-400">
-                    Posted {getMinutesAgo(createdAt)} mins ago
+                    Posted {getMinutesAgo(blockTime, createdAt)} mins ago
                   </p>
                 </div>
               </CardTitle>
@@ -307,7 +317,7 @@ function PostCard({
 
           <CardContent className="text-sm p-0 flex items-center justify-center max-h-[500px]">
             <img
-              src={image}
+              src={`/api/image?id=${image}`}
               className="w-full h-auto max-h-[500px] object-cover"
               alt="post image"
             />

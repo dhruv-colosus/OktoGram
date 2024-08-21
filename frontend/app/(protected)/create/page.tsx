@@ -16,7 +16,8 @@ import { useAuthStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { createPost } from "@/lib/contract";
+import { createPost, createStory } from "@/lib/contract";
+import axios from "axios";
 
 function Page() {
   const [caption, setCaption] = useState<string>("");
@@ -26,13 +27,14 @@ function Page() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { user } = useAuthStore();
+  const store = useAuthStore();
 
   const handleCaptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setCaption(e.target.value);
   };
   const handleLikeChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNooflikes(Number(e.target.value));
-  };
+  };  
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const fileList = Array.from(e.target.files);
@@ -48,6 +50,7 @@ function Page() {
     setError(null);
 
     if (!user) {
+      console.log(store);
       setError("User not logged in");
       setIsLoading(false);
       return;
@@ -64,27 +67,26 @@ function Page() {
           });
         })
       );
+
+      const image = encodedImages[0];
+      const imageRes = await axios.post("/api/image", { content: image });
+      const imageId: string = imageRes.data.id;
+
       var postId;
       if (!caption) {
-        // await createStory(
-        //   caption,
-        //   "https://www.ie.edu/insights/wp-content/uploads/2022/01/San-Jose-Feature.jpg"
-        // );
-        // // postId = await createPost(caption, user.user_id, encodedImages);
-        // toast.success("Story has been Uploaded.");
+        await createStory(imageId);
+        postId = await createStory(imageId);
+        toast.success("Story has been Uploaded.");
       } else if (nooflikes) {
-        postId = await createGiveaway(
-          caption,
-          user.user_id,
-          encodedImages,
-          nooflikes
-        );
+        // postId = await createGiveaway(
+        //   caption,
+        //   user.user_id,
+        //   encodedImages,
+        //   nooflikes
+        // );
         toast.success("Giveaway has been created.");
       } else {
-        await createPost(
-          caption,
-          "https://www.ie.edu/insights/wp-content/uploads/2022/01/San-Jose-Feature.jpg"
-        );
+        await createPost(caption, imageId);
         // postId = await createPost(caption, user.user_id, encodedImages);
         toast.success("Post has been created.");
       }

@@ -10,6 +10,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { getStories } from "@/lib/contract";
 function Stories() {
   const images = [
     "/images/stories/1.jpg",
@@ -18,6 +19,15 @@ function Stories() {
     "/images/stories/4.jpg",
     "/images/stories/5.jpg",
   ];
+
+  const [stories, setStories] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    getStories().then((stories:any) => {
+      setStories(stories.map((story:any) => `/api/image?id=${story.image}`));
+      console.log(stories);
+    });
+  }, []);
 
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
@@ -30,7 +40,7 @@ function Stories() {
         className="w-full max-w-full"
       >
         <CarouselContent className="-ml-4">
-          {images.map((imageSrc, index) => (
+          {stories.map((imageSrc, index) => (
             <CarouselItem
               key={index}
               className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
