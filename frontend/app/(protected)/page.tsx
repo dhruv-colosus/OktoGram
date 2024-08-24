@@ -7,6 +7,7 @@ import FriendsRec from "../Components/FriendsRec";
 
 import { useEffect, useState } from "react";
 import { getPosts } from "@/lib/contract";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -49,6 +50,12 @@ export default function Home() {
                 />
               );
             })}
+            {posts.length === 0 && (
+              <>
+                <Skeleton className="h-[525px] w-[400px] mb-3 " />
+                <Skeleton className="h-[525px] w-[400px] mb-3" />
+              </>
+            )}
           </div>
         </div>
       </main>

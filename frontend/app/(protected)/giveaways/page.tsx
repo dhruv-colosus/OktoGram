@@ -1,6 +1,7 @@
 "use client";
 import GiveawayCard from "@/app/Components/Giveawaycard";
 import PostCard from "@/app/Components/PostCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getPosts } from "@/lib/contract";
 
 import { useEffect, useState } from "react";
@@ -44,6 +45,12 @@ function Home() {
               />
             );
           })}
+          {posts.length === 0 && (
+            <>
+              <Skeleton className="h-[525px] w-[400px] mb-3 " />
+              <Skeleton className="h-[525px] w-[400px] mb-3" />
+            </>
+          )}
         </div>
       </div>
     </>

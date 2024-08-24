@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { getStories } from "@/lib/contract";
+import { Skeleton } from "@/components/ui/skeleton";
 function Stories() {
   const images = [
     "/images/stories/1.jpg",
@@ -23,8 +24,8 @@ function Stories() {
   const [stories, setStories] = React.useState<string[]>([]);
 
   React.useEffect(() => {
-    getStories().then((stories:any) => {
-      setStories(stories.map((story:any) => `/api/image?id=${story.image}`));
+    getStories().then((stories: any) => {
+      setStories(stories.map((story: any) => `/api/image?id=${story.image}`));
       console.log(stories);
     });
   }, []);
@@ -58,6 +59,15 @@ function Stories() {
               </div>
             </CarouselItem>
           ))}
+
+          {stories.length === 0 && (
+            <>
+              <Skeleton className="h-[225px] w-[220px] mr-3 " />
+              <Skeleton className="h-[225px] w-[220px]  mr-3" />
+              <Skeleton className="h-[225px] w-[220px]  mr-3" />
+              <Skeleton className="h-[225px] w-[220px]  mr-3" />
+            </>
+          )}
         </CarouselContent>
         {/* <CarouselPrevious />
             <CarouselNext /> */}
