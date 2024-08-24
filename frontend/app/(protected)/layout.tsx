@@ -31,7 +31,7 @@ export default function ProtectedLayout({
 
   useEffect(() => {
     if (!_hasHydrated) return;
-    
+
     if (accessToken === null) {
       router.push("/signin");
     }
@@ -104,7 +104,9 @@ export default function ProtectedLayout({
       <SideBar />
       <div className="flex flex-col flex-grow overflow-hidden">
         <TopBar />
-        <div className="flex flex-1 overflow-hidden">{children}</div>
+        <div className="flex flex-1 justify-between overflow-hidden">
+          {children}
+        </div>
       </div>
     </div>
   );

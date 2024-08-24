@@ -117,7 +117,10 @@ function PostCard({
     );
     return differenceInMinutes;
   }
-
+  function sliceEmailDomain(email: string): string {
+    const atIndex = email.indexOf("@");
+    return atIndex !== -1 ? email.slice(0, atIndex) : "";
+  }
   const awardfunc = async () => {
     console.log(amountVal, networkVal, tokenVal);
 
@@ -205,7 +208,7 @@ function PostCard({
                       router.push(`/user/${user}`);
                     }}
                   >
-                    {user.name.slice(0, 20)}
+                    {sliceEmailDomain(user.name)}
                   </span>
                   <p className="text-xs text-gray-400">
                     Posted {getMinutesAgo(blockTime, createdAt)} mins ago
@@ -315,7 +318,7 @@ function PostCard({
             </div>
           </CardHeader>
 
-          <CardContent className="text-sm p-0 flex items-center justify-center max-h-[500px]">
+          <CardContent className="text-sm p-0 flex items-center justify-center max-h-[500px] min-h-[200px]">
             <img
               src={`/api/image?id=${image}`}
               className="w-full h-auto max-h-[500px] object-cover"

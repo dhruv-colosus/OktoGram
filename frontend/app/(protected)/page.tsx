@@ -28,7 +28,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="overflow-y-auto">
+      <main className="overflow-y-auto flex-1">
         <div className=" p-5 ">
           <h2 className="font-web3 font-bold text-2xl mb-4">Latest Stories</h2>
           <Stories />
@@ -52,7 +52,7 @@ export default function Home() {
           </div>
         </div>
       </main>
-      <div className="w-[300px] lg:w-[300px] overflow-y-auto p-5 flex-shrink-0">
+      <div className="w-[300px] lg:w-[300px] overflow-y-auto p-5 flex-shrink-0 ">
         <RightBar />
         <FriendsRec />
       </div>

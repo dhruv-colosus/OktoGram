@@ -25,12 +25,13 @@ interface PostCardProps {
   caption: string;
   image: string;
   user: string;
-  createdAt: Date;
+  createdAt: string;
   likesNeeded: number;
   likes: number;
 }
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getBlockNumber } from "@/lib/contract";
 function GiveawayCard({
   caption,
   image,
@@ -41,28 +42,31 @@ function GiveawayCard({
 }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(originalLikes);
-
-  const [progress, setProgress] = useState((likes / likesNeeded) * 100);
+  console.log("likes needed :", likesNeeded);
+  const [progress, setProgress] = useState(() => {
+    const likesNum = Number(likes);
+    const likesNeededNum = Number(likesNeeded);
+    return (likesNum / likesNeededNum) * 100;
+  });
   const handleHeartClick = () => {
-    setIsLiked(!isLiked);
-    if (!isLiked) {
-      setLikes((prevLikes) => {
-        const newLikes = Math.min(prevLikes + 1, likesNeeded);
-        setProgress((newLikes / likesNeeded) * 100);
-        return newLikes;
-      });
-    } else {
-      setLikes((prevLikes) => {
-        const newLikes = Math.max(prevLikes - 1, 0);
-        setProgress((newLikes / likesNeeded) * 100);
-        return newLikes;
-      });
-    }
+    setIsLiked((prevIsLiked) => !prevIsLiked);
+
+    const likesNeededNum = Number(likesNeeded);
+
+    setLikes((prevLikes) => {
+      const prevLikesNum = Number(prevLikes);
+      const newLikes = !isLiked
+        ? Math.min(prevLikesNum + 1, likesNeededNum)
+        : Math.max(prevLikesNum - 1, 0);
+
+      setProgress((newLikes / likesNeededNum) * 100);
+      return newLikes;
+    });
   };
 
-  function getMinutesAgo(createdAt: Date): number {
+  function getMinutesAgo(blockTime: number, createdAt: string): number {
     const now = new Date();
-    const differenceInMilliseconds = now.getTime() - createdAt.getTime();
+    const differenceInMilliseconds = (blockTime - parseInt(createdAt)) * 2000; // TODO current block global state
     const differenceInMinutes = Math.floor(
       differenceInMilliseconds / (1000 * 60)
     );
@@ -76,6 +80,14 @@ function GiveawayCard({
     }, 1000);
     setLoading(false);
   };
+
+  const [blockTime, setBlockTime] = useState(Infinity);
+
+  useEffect(() => {
+    getBlockNumber().then((num) => {
+      setBlockTime(Number(num));
+    });
+  }, []);
   return (
     <>
       <div className="mb-4  ">
@@ -93,7 +105,7 @@ function GiveawayCard({
                 <div>
                   <span className="font-web3 text-xl">{user}</span>
                   <p className="text-xs text-gray-400">
-                    Posted {getMinutesAgo(createdAt)} mins ago
+                    Posted {getMinutesAgo(blockTime, createdAt)} mins ago
                   </p>
                 </div>
               </CardTitle>

@@ -31,6 +31,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import { getTips } from "@/actions/profile";
@@ -45,8 +54,9 @@ type TipWithUser = Prisma.TipGetPayload<{
 
 export default function Profile() {
   const { user } = useAuthStore();
-
+  console.log("user", user);
   const [sentTips, setSentTips] = useState<TipWithUser[]>([]);
+  const [tokens, setTokens] = useState<any>([]);
   const [receivedTips, setReceivedTips] = useState<TipWithUser[]>([]);
   const [totalTips, setTotalTips] = useState<{ in: number; out: number }>({
     in: 0,
@@ -75,11 +85,13 @@ export default function Profile() {
 
     getPortfolio()
       .then((data) => {
+        console.log("tokens", data.tokens);
+        setTokens(data.tokens);
         let bal = data.tokens.reduce(
           (prev, curr) => prev + Number(curr.quantity),
           0
         );
-        setTotalBal(bal * 0.49);
+        setTotalBal(bal * 0.5338);
       })
       .catch(() => {
         toast.error("Failed to get portfolio");
@@ -163,7 +175,40 @@ export default function Profile() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Progress value={100} aria-label="100% increase" />
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button>Full Portfolio</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>My Tokens</DialogTitle>
+                        <DialogDescription>
+                          These are your available tokens in your wallet on the
+                          specified blockchains
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        {tokens.map((token: any) => (
+                          <div
+                            key={token.id}
+                            className="flex items-center justify-between px-4 py-2"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div>
+                                <div className="font-medium">
+                                  {token.network_name}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right text-primary">
+                              {Number(token.quantity).toFixed(4)}
+                              {" " + token.token_name}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </CardFooter>
               </Card>
               <Card x-chunk="dashboard-05-chunk-1">

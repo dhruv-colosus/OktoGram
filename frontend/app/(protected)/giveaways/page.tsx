@@ -30,13 +30,14 @@ function Home() {
         <h2 className="font-web3 font-bold text-4xl mb-8  ">New Giveaways</h2>
         <div className="flex flex-col items-center justify-center">
           {posts?.map((post) => {
+            console.log("user", post.user);
             return (
               <GiveawayCard
                 key={post.id.toString()}
                 postId={post.id.toString()}
                 caption={post.content}
                 image={post.image}
-                user={post.user}
+                user={post.user.name}
                 createdAt={post.createdAt.toString()}
                 likesNeeded={post.likesNeeded}
                 likes={post.likes}
