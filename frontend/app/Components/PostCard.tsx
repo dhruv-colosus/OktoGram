@@ -62,7 +62,6 @@ interface PostCardProps {
 }
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getPostTipNetworks, storeTip } from "@/actions/post";
 import { useAuthStore } from "@/store";
 import { OktoContextType, Token, Wallet, useOkto } from "okto-sdk-react";
 import { toast } from "sonner";
@@ -136,14 +135,7 @@ function PostCard({
         toast.success("Transfer successful");
         console.log("Transfer success", result);
         setDialogOpen(false);
-        await storeTip({
-          userId: authUser!.user_id,
-          postId,
-          network: networkVal,
-          token: tokenVal,
-          amount: amountVal.toString(),
-          orderId: result.orderId,
-        });
+        // TODO store tip
         console.log("stored tip");
       })
       .catch((error) => {
@@ -159,13 +151,7 @@ function PostCard({
     setDialogOpen(open);
     if (open && !tipNetworks) {
       setTipNetworks([]);
-      getPostTipNetworks(
-        postId,
-        authUser?.wallets.map((wallet) => wallet.network_name) || []
-      ).then((postNetworks) => {
-        setTipNetworks(postNetworks);
-        console.log(postNetworks);
-      });
+     
     }
   };
 
