@@ -37,6 +37,7 @@ contract Oktogram is Ownable(msg.sender) {
 
     uint256 private _postCounter = 0;
     uint256 private _storyCounter = 0;
+    mapping(address => string) _users;
     mapping(uint256 => Post) _posts;
     mapping(uint256 => Story) _stories;
     mapping(uint256 => mapping(address => uint256)) _tips;
@@ -130,7 +131,7 @@ contract Oktogram is Ownable(msg.sender) {
         require(post.isGiveaway, "Not a giveaway post");
         require(post.likes >= post.targetLikes, "Target likes not reached");
         require(!post.giveawayCompleted, "Giveaway has been completed");
-                
+
         // TODO random
     }
 
