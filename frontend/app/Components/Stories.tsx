@@ -48,12 +48,14 @@ function Stories() {
             >
               <div className="p-1">
                 <Card className="h-[200px] w-full overflow-hidden">
-                  <CardContent className="p-0">
-                    <img
-                      src={imageSrc}
-                      alt={`Carousel image ${index + 1}`}
-                      className=" h-full object-cover"
-                    />
+                  <CardContent className="p-0 h-full">
+                    <div className="relative w-full h-full">
+                      <img
+                        src={imageSrc}
+                        alt={`Carousel image ${index + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    </div>
                   </CardContent>
                 </Card>
               </div>

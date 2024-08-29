@@ -11,7 +11,7 @@ model User {
   email    String @id
   username String @unique
   wallet   String
-  Tip      Tip[]
+  // Tip      Tip[]
 }
 
 model Image {
@@ -21,7 +21,7 @@ model Image {
 
 model Tip {
   id        String @id @default(uuid())
-  tipper    User   @relation(fields: [userEmail], references: [email])
+  // tipper    User   @relation(fields: [userEmail], references: [email])
   userEmail String
   destEmail String
   postId    String

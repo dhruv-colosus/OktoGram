@@ -114,7 +114,11 @@ function PostCard({
   const [tokenVal, setTokenVal] = useState<string>("0x");
   const [amountVal, setAmountVal] = useState<number>(0);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
+  const handleImageError = () => {
+    setImageError(true);
+  };
   function getMinutesAgo(blockTime: number, createdAt: string): number {
     const now = new Date();
     const differenceInMilliseconds = (blockTime - parseInt(createdAt)) * 2000;
@@ -306,9 +310,10 @@ function PostCard({
 
           <CardContent className="text-sm p-0 flex items-center justify-center max-h-[500px] min-h-[200px]">
             <img
-              src={`/api/image?id=${image}`}
+              src={imageError ? "/stories/1.jpg" : `/api/image?id=${image}`}
               className="w-full h-auto max-h-[500px] object-cover"
               alt="post image"
+              onError={handleImageError}
             />
           </CardContent>
           <CardFooter className="flex flex-row items-start border-t bg-muted/50 px-6 py-3 justify-between">

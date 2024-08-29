@@ -33,15 +33,14 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
-import { getTips } from "@/actions/profile";
 import { useAuthStore } from "@/store";
 import { toast } from "sonner";
 import { Prisma, Tip } from "@prisma/client";
 import { OktoContextType, useOkto } from "okto-sdk-react";
 
-type TipWithUser = Prisma.TipGetPayload<{
-  include: { post: { include: { author: true } }; from: true };
-}>;
+// type TipWithUser = Prisma.TipGetPayload<{
+//   include: { post: { include: { author: true } }; from: true };
+// }>;
 
 export default function Profile({ params }) {
   const mockData = {
@@ -76,22 +75,22 @@ export default function Profile({ params }) {
   const { getPortfolio } = useOkto() as OktoContextType;
 
   useEffect(() => {
-    getTips(user?.user_id || "-")
-      .then(({ sentTips: sTips, receivedTips: rTips }) => {
-        setSentTips(sTips);
-        setReceivedTips(rTips);
+    // getTips(user?.user_id || "-")
+    //   .then(({ sentTips: sTips, receivedTips: rTips }) => {
+    //     setSentTips(sTips);
+    //     setReceivedTips(rTips);
 
-        const totalIn = rTips
-          .map((tip) => Number(tip.amount))
-          .reduce((a, b) => a + b, 0);
-        const totalOut = sTips
-          .map((tip) => Number(tip.amount))
-          .reduce((a, b) => a + b, 0);
-        setTotalTips({ in: totalIn * 0.49, out: totalOut * 0.49 });
-      })
-      .catch(() => {
-        toast.error("Insufficient Funds in Wallet");
-      });
+    //     const totalIn = rTips
+    //       .map((tip) => Number(tip.amount))
+    //       .reduce((a, b) => a + b, 0);
+    //     const totalOut = sTips
+    //       .map((tip) => Number(tip.amount))
+    //       .reduce((a, b) => a + b, 0);
+    //     setTotalTips({ in: totalIn * 0.49, out: totalOut * 0.49 });
+    //   })
+    //   .catch(() => {
+    //     toast.error("Insufficient Funds in Wallet");
+    //   });
 
     getPortfolio()
       .then((data) => {
@@ -108,7 +107,7 @@ export default function Profile({ params }) {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40 overflow-y-auto">
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+      <div className="flex flex-col sm:gap-4 sm:py-4 ">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           <h1 className="text-3xl font-web3 font-bold">
             {params.userid.slice(0, 20)} Profile
