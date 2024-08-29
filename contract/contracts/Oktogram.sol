@@ -132,7 +132,22 @@ contract Oktogram is Ownable(msg.sender) {
         require(post.likes >= post.targetLikes, "Target likes not reached");
         require(!post.giveawayCompleted, "Giveaway has been completed");
 
-        // TODO random
+        address winner = getWinner(postId);
+        IERC721 nft = IERC721(_posts[postId].nftAddress);
+        nft.transferFrom(address(this), winner, post.nftTokenId);
+    }
+
+    function getWinner(uint256 postId) private view returns (address) {
+        uint256 length = _likers[postId].length();
+        require(length > 0, "Likes is empty");
+
+        uint256 randomIndex = uint256(
+            keccak256(
+                abi.encodePacked(block.timestamp, block.prevrandao, msg.sender)
+            )
+        ) % length;
+
+        return _likers[postId].at(randomIndex);
     }
 
     function getAllPosts() external view returns (Post[] memory) {

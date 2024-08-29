@@ -30,6 +30,8 @@ export async function GET(req: NextRequest) {
       }
     );
   } catch (error) {
+    console.log(error);
+
     return NextResponse.json(
       { error: "Error fetching image" },
       { status: 500 }

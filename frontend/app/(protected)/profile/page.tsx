@@ -42,22 +42,17 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
-import { getTips } from "@/actions/profile";
 import { useAuthStore } from "@/store";
 import { toast } from "sonner";
 import { Prisma, Tip } from "@prisma/client";
 import { OktoContextType, useOkto } from "okto-sdk-react";
 
-type TipWithUser = Prisma.TipGetPayload<{
-  include: { post: { include: { author: true } }; from: true };
-}>;
-
 export default function Profile() {
   const { user } = useAuthStore();
   console.log("user", user);
-  const [sentTips, setSentTips] = useState<TipWithUser[]>([]);
+  const [sentTips, setSentTips] = useState<any[]>([]);
   const [tokens, setTokens] = useState<any>([]);
-  const [receivedTips, setReceivedTips] = useState<TipWithUser[]>([]);
+  const [receivedTips, setReceivedTips] = useState<any[]>([]);
   const [totalTips, setTotalTips] = useState<{ in: number; out: number }>({
     in: 0,
     out: 0,
@@ -66,22 +61,22 @@ export default function Profile() {
   const { getPortfolio } = useOkto() as OktoContextType;
 
   useEffect(() => {
-    getTips(user?.user_id || "-")
-      .then(({ sentTips: sTips, receivedTips: rTips }) => {
-        setSentTips(sTips);
-        setReceivedTips(rTips);
+    // getTips(user?.user_id || "-")
+    //   .then(({ sentTips: sTips, receivedTips: rTips }) => {
+    //     setSentTips(sTips);
+    //     setReceivedTips(rTips);
 
-        const totalIn = rTips
-          .map((tip) => Number(tip.amount))
-          .reduce((a, b) => a + b, 0);
-        const totalOut = sTips
-          .map((tip) => Number(tip.amount))
-          .reduce((a, b) => a + b, 0);
-        setTotalTips({ in: totalIn * 0.49, out: totalOut * 0.49 });
-      })
-      .catch(() => {
-        toast.error("Insufficient Funds in Wallet");
-      });
+    //     const totalIn = rTips
+    //       .map((tip) => Number(tip.amount))
+    //       .reduce((a, b) => a + b, 0);
+    //     const totalOut = sTips
+    //       .map((tip) => Number(tip.amount))
+    //       .reduce((a, b) => a + b, 0);
+    //     setTotalTips({ in: totalIn * 0.49, out: totalOut * 0.49 });
+    //   })
+    //   .catch(() => {
+    //     toast.error("Insufficient Funds in Wallet");
+    //   });
 
     getPortfolio()
       .then((data) => {

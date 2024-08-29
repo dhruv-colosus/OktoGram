@@ -66,6 +66,7 @@ import { useAuthStore } from "@/store";
 import { OktoContextType, Token, Wallet, useOkto } from "okto-sdk-react";
 import { toast } from "sonner";
 import { getBlockNumber } from "@/lib/contract";
+import { storeTip } from "@/actions/other";
 
 const toNetworkName = (capsName: string) => {
   return capsName
@@ -74,6 +75,13 @@ const toNetworkName = (capsName: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 };
+
+const availTokens = [
+  {
+    token_address: "",
+    token_name: "MATIC",
+  },
+];
 
 function PostCard({
   postId,
@@ -97,8 +105,7 @@ function PostCard({
   const handleBookMarkClick = () => {
     setisBookMark(!isBookMark);
   };
-  const [tipNetworks, setTipNetworks] = useState<Wallet[] | null>(null);
-  const [availTokens, setAvailTokens] = useState<Token[]>([]);
+
   const { user: authUser } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const { transferTokens } = useOkto() as OktoContextType;
@@ -110,7 +117,7 @@ function PostCard({
 
   function getMinutesAgo(blockTime: number, createdAt: string): number {
     const now = new Date();
-    const differenceInMilliseconds = (blockTime - parseInt(createdAt)) * 2000; // TODO current block global state
+    const differenceInMilliseconds = (blockTime - parseInt(createdAt)) * 2000;
     const differenceInMinutes = Math.floor(
       differenceInMilliseconds / (1000 * 60)
     );
@@ -124,18 +131,23 @@ function PostCard({
     console.log(amountVal, networkVal, tokenVal);
 
     setLoading(true);
+    toast.info("Sending tokens");
     transferTokens({
       network_name: networkVal,
       token_address: tokenVal === "NATIVE" ? "" : tokenVal,
-      recipient_address:
-        tipNetworks?.find((w) => w.network_name === networkVal)?.address || "",
+      recipient_address: user.author,
       quantity: amountVal.toString(),
     })
       .then(async (result) => {
         toast.success("Transfer successful");
         console.log("Transfer success", result);
         setDialogOpen(false);
-        // TODO store tip
+        await storeTip(
+          authUser?.email || "",
+          user.author,
+          amountVal.toString(),
+          postId
+        );
         console.log("stored tip");
       })
       .catch((error) => {
@@ -149,17 +161,10 @@ function PostCard({
 
   const onOpenChange = (open: boolean) => {
     setDialogOpen(open);
-    if (open && !tipNetworks) {
-      setTipNetworks([]);
-     
-    }
   };
 
   const networkValChange = (newNetwork: string) => {
     setNetworkVal(newNetwork);
-    setAvailTokens(
-      authUser?.tokens.filter((tok) => tok.network_name === newNetwork) || []
-    );
   };
 
   useEffect(() => {
@@ -228,14 +233,9 @@ function PostCard({
                           <SelectValue placeholder="Select Network" />
                         </SelectTrigger>
                         <SelectContent>
-                          {(tipNetworks ?? []).map((tipNetwork, idx) => (
-                            <SelectItem
-                              key={idx}
-                              value={tipNetwork.network_name}
-                            >
-                              {toNetworkName(tipNetwork.network_name)}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="POLYGON_TESTNET_AMOY">
+                            {toNetworkName("POLYGON_TESTNET_AMOY")}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

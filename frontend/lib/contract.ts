@@ -2,6 +2,7 @@ import axios from "axios";
 import { headers } from "next/headers";
 import { useAuthStore } from "@/store";
 import abi from "@/assets/Oktogram.json";
+import nftAbi from "@/assets/OktogramNFT.json";
 import { Web3 } from "web3";
 
 const MAX_TRIES = 40;
@@ -9,6 +10,10 @@ const TRIES_INTERVAL = 3000;
 
 const web3 = new Web3("https://rpc-amoy.polygon.technology/");
 const contract = new web3.eth.Contract(
+  abi.abi,
+  process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+);
+const nftContract = new web3.eth.Contract(
   abi.abi,
   process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 );
@@ -43,11 +48,11 @@ export const getBlockNumber = tle_cache(async () => {
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-const callFunction = async (func: string, value: string, args: any) => {
+const callFunction = async (c: any, func: string, value: string, args: any) => {
   const from = getTestnetAddress();
   if (!from) throw new Error("wallet not found");
 
-  const encodedData = contract.methods[func](...args).encodeABI();
+  const encodedData = c.methods[func](...args).encodeABI();
 
   const res = await instance.post(
     "/api/v1/rawtransaction/execute",
@@ -125,11 +130,24 @@ export const getStories = async () => {
 };
 
 export const createPost = async (content: string, imageId: string) => {
-  await callFunction("createPost", "0x0", [
+  await callFunction(contract, "createPost", "0x0", [
     useAuthStore.getState().user?.email || "user",
     imageId,
     content,
   ]);
+};
+
+export const createGiveaway = async (content: string, imageId: string) => {
+  await callFunction(contract, "createNft", "0x0", [
+    useAuthStore.getState().user?.email || "user",
+    imageId,
+    content,
+  ]);
+  // await callFunction("createPost", "0x0", [
+  //   useAuthStore.getState().user?.email || "user",
+  //   imageId,
+  //   content,
+  // ]);
 };
 
 export const createStory = async (imageId: string) => {
