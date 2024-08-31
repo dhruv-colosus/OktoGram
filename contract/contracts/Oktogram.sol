@@ -5,6 +5,13 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
+interface IOktogramNFT {
+    function createNft(
+        address user,
+        string memory tokenURI
+    ) external returns (uint256);
+}
+
 contract Oktogram is Ownable(msg.sender) {
     using EnumerableSet for EnumerableSet.AddressSet;
 
@@ -80,13 +87,13 @@ contract Oktogram is Ownable(msg.sender) {
         string memory image,
         string memory content,
         address nftAddress,
-        uint256 nftTokenId,
+        string memory imageId,
         uint256 targetLikes
     ) public {
         require(targetLikes > 0, "Target likes must be greater than 0");
 
-        IERC721 nft = IERC721(nftAddress);
-        require(nft.ownerOf(nftTokenId) == msg.sender, "You must own the NFT");
+        IOktogramNFT nftContract = IOktogramNFT(nftAddress);
+        uint256 nftTokenId = nftContract.createNft(address(this), imageId);
 
         _postCounter++;
         uint256 postId = _postCounter;
@@ -103,8 +110,6 @@ contract Oktogram is Ownable(msg.sender) {
         newPost.nftAddress = nftAddress;
         newPost.nftTokenId = nftTokenId;
         newPost.targetLikes = targetLikes;
-
-        nft.transferFrom(msg.sender, address(this), nftTokenId);
     }
 
     function toggleLike(uint256 postId) public {

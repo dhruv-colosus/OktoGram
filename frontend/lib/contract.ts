@@ -4,6 +4,7 @@ import { useAuthStore } from "@/store";
 import abi from "@/assets/Oktogram.json";
 import nftAbi from "@/assets/OktogramNFT.json";
 import { Web3 } from "web3";
+import { toast } from "sonner";
 
 const MAX_TRIES = 40;
 const TRIES_INTERVAL = 3000;
@@ -15,7 +16,7 @@ const contract = new web3.eth.Contract(
 );
 const nftContract = new web3.eth.Contract(
   abi.abi,
-  process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+  process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS
 );
 
 const instance = axios.create({
@@ -80,6 +81,10 @@ const callFunction = async (c: any, func: string, value: string, args: any) => {
   const jobId = res.data.data.jobId as string;
   console.log("got job id", jobId);
 
+  toast.success(
+    "The transaction has been published to the blockchain. It will be reflected in a while"
+  );
+
   return new Promise<void>(async (resolve, reject) => {
     let remainingTries = MAX_TRIES;
     while (remainingTries--) {
@@ -92,17 +97,18 @@ const callFunction = async (c: any, func: string, value: string, args: any) => {
 
       if (res.data.status !== "success") {
         console.log(res.data);
-        throw new Error("job check failed");
+        reject("Status was not successful");
       }
 
-      const job = res.data.data.jobs.filter(
-        (job: any) => job.order_id === jobId
-      );
+      const job = res.data.data.jobs.find((job: any) => job.order_id === jobId);
+
+      if (!job) {
+        reject("Job not found");
+      }
 
       console.log(job);
-      if (job.status === "PUBLISHED") {
-        resolve();
-        return;
+      if (job.status === "SUCCESS") {
+        toast.success("The transaction was successful");
       }
 
       await sleep(TRIES_INTERVAL);
@@ -137,34 +143,28 @@ export const createPost = async (content: string, imageId: string) => {
   ]);
 };
 
-export const createGiveaway = async (content: string, imageId: string) => {
-  await callFunction(contract, "createNft", "0x0", [
+export const createGiveaway = async (
+  content: string,
+  imageId: string,
+  targetLikes: number
+) => {
+  await callFunction(contract, "createGiveaway", "0x0", [
     useAuthStore.getState().user?.email || "user",
     imageId,
     content,
+    process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS,
+    imageId,
+    targetLikes,
   ]);
-  // await callFunction("createPost", "0x0", [
-  //   useAuthStore.getState().user?.email || "user",
-  //   imageId,
-  //   content,
-  // ]);
 };
 
 export const createStory = async (imageId: string) => {
-  await callFunction("createStory", "0x0", [
+  await callFunction(contract, "createStory", "0x0", [
     useAuthStore.getState().user?.email || "user",
     imageId,
   ]);
 };
 
-export const createGiveawayPost = async (
-  content: string,
-  imageUrl: string,
-  targetLikes: string
-) => {
-  // TODO upload nft
-};
-
 export const toggleLike = async (postId: number) => {
-  await callFunction("toggleLike", "0x0", [postId]);
+  await callFunction(contract, "toggleLike", "0x0", [postId]);
 };
