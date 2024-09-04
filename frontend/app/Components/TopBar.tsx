@@ -37,6 +37,17 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
+import { useEffect, useState } from "react";
+import { searchUser } from "@/actions/other";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/components/ui/command";
+interface SearchResult {
+  email: string;
+}
 function TopBar() {
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
@@ -50,6 +61,36 @@ function TopBar() {
 
     return `${baseClass} ${pathname === href ? activeClass : inactiveClass}`;
   };
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [results, setResults] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  useEffect(() => {
+    const delayDebounceFn = async () => {
+      if (searchTerm) {
+        setIsLoading(true);
+        try {
+          const searchResults = await searchUser(searchTerm);
+          setResults(searchResults.result);
+          console.log("searchResults : ", searchResults.result);
+        } catch (error) {
+          console.error("Search error:", error);
+          setResults([]);
+        } finally {
+          console.log("results : ", results);
+          setIsLoading(false);
+        }
+      } else {
+        setResults([]);
+      }
+    };
+
+    delayDebounceFn();
+  }, [searchTerm]);
+  useEffect(() => {
+    if (results.length > 0) {
+      console.log("Updated results: ", results);
+    }
+  }, [results]);
   return (
     <>
       <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
@@ -116,13 +157,40 @@ function TopBar() {
         </Sheet>
         <div className="w-full flex-1">
           <form>
-            <div className="relative">
+            <div className="relative w-full md:w-2/3 lg:w-1/3">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Search Users..."
-                className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+                className="w-full appearance-none bg-background pl-8 shadow-none"
+                value={searchTerm}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchTerm(e.target.value)
+                }
               />
+              {searchTerm && (
+                <div className="absolute top-full left-0 w-full mt-1 bg-black  shadow-md z-50 font-web3 text-sm">
+                  <div className="p-2">
+                    {isLoading ? (
+                      <div className="text-center text-white">Searching...</div>
+                    ) : (results || []).length > 0 ? (
+                      results.map((result, index) => (
+                        <div
+                          key={index}
+                          className="p-2 cursor-pointer hover:text-primary transition-colors"
+                          // onClick={() => console.log("Selected:", result)}
+                        >
+                          {result}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center text-gray-500">
+                        No results found.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </form>
         </div>

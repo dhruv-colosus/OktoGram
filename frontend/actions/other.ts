@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { error } from "console";
 
 export const storeTip = async (
   userEmail: string,
@@ -125,8 +126,9 @@ export const searchUser = async (term: string) => {
     const matches = await prisma.user.findMany({
       where: { email: { contains: term.toLowerCase(), mode: "insensitive" } },
     });
-    return matches.map((u) => u.email);
+    const result = matches.map((u) => u.email);
+    return { result, error: false };
   } catch (e: any) {
-    return { error: e.message };
+    return { error: true, message: e.message, result: [] };
   }
 };

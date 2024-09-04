@@ -17,7 +17,7 @@ export default function Home() {
       console.log(posts);
       setPosts(
         (posts as any[])
-          .toSorted((a, b) => Number(a.createdAt) - Number(b.createdAt))
+          .toSorted((a, b) => Number(b.createdAt) - Number(a.createdAt))
           .filter((post) => !post.isGiveaway)
       );
     });

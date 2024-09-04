@@ -50,7 +50,7 @@ export default function ProtectedLayout({
     setLoading(true);
     authenticate(accessToken, async (result, error) => {
       if (result) {
-        console.log("got auth");
+        console.log("got auth : ", result);
         setAuthToken(result.auth_token);
         setLoading(false);
       }
@@ -61,28 +61,18 @@ export default function ProtectedLayout({
         router.push("/signin");
       }
     });
-  }, [
-    accessToken,
-    authenticate,
-    logout,
-    router,
-    loading,
-    setAuthToken,
-    authToken,
-  ]);
+  }, [accessToken, authenticate, logout, router, setAuthToken, authToken]);
 
   useEffect(() => {
     if (!authToken || loading) return;
-
     setLoading(true);
     (async () => {
       try {
-        console.log("getting details");
-
         await createWallet();
         const details = await getUserDetails();
         const wallets = await getWallets();
         const tokens = await getSupportedTokens();
+        console.log("getting details : ", details);
 
         setUser({
           user_id: details.user_id,
@@ -94,6 +84,7 @@ export default function ProtectedLayout({
         console.log(e);
       }
     })();
+    setLoading(false);
   }, [
     authToken,
     getSupportedTokens,
@@ -101,7 +92,6 @@ export default function ProtectedLayout({
     getWallets,
     setUser,
     user,
-    loading,
     createWallet,
   ]);
 

@@ -32,17 +32,18 @@ export default function Home() {
       );
     });
 
-    getFriends(user!.email).then((_friends) => {
-      if (!Array.isArray(_friends)) {
-        console.log(_friends.error);
-        return;
-      }
-      setFriends(_friends);
-    });
+    if (user) {
+      getFriends(user!.email).then((_friends) => {
+        if (!Array.isArray(_friends)) {
+          console.log(_friends.error);
+          return;
+        }
+        setFriends(_friends);
+      });
+    }
   }, [_hasHydrated, user]);
 
   useEffect(() => {
-    
     setPostsFiltered(posts.filter((post) => friends.includes(post.user.name)));
   }, [posts, friends]);
 
