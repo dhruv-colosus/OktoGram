@@ -46,7 +46,7 @@ import { useAuthStore } from "@/store";
 import { toast } from "sonner";
 import { Prisma, Tip } from "@prisma/client";
 import { OktoContextType, useOkto } from "okto-sdk-react";
-import { getTips } from "@/actions/other";
+import { changeFriend, getFriends, getTips } from "@/actions/other";
 import { sliceEmailDomain } from "@/app/Components/PostCard";
 
 export default function Profile() {
@@ -55,6 +55,8 @@ export default function Profile() {
   const [sentTips, setSentTips] = useState<any[]>([]);
   const [tokens, setTokens] = useState<any>([]);
   const [receivedTips, setReceivedTips] = useState<any[]>([]);
+  const [friends, setFriends] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const [totalTips, setTotalTips] = useState<{ in: number; out: number }>({
     in: 0,
     out: 0,
@@ -95,6 +97,31 @@ export default function Profile() {
         // toast.error("Failed to get portfolio");
       });
   }, [user, getPortfolio, _hasHydrated]);
+
+  useEffect(() => {
+    async function fetchFriends() {
+      const friends = await getFriends(user!.email);
+      if (Array.isArray(friends)) {
+        setFriends(friends);
+      }
+      console.log("friends", friends);
+    }
+    if (user) {
+      fetchFriends();
+    }
+  }, [user]);
+
+  const handleFollowChange = async (friend: string) => {
+    setLoading(true);
+    const status = await changeFriend(user!.email, friend);
+    setLoading(false);
+
+    if (status) {
+      setFriends((prev) => prev.filter((f) => f !== friend));
+      toast.success("Friend Removed");
+    }
+    console.log(friend);
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40 overflow-y-scroll">
@@ -303,7 +330,7 @@ export default function Profile() {
             </Tabs>
           </div>
         </main>
-        <div className="mb-16 p-4 sm:px-6 sm:py-0 h-[60vh]">
+        <div className="mb-16 p-4 sm:px-6 sm:py-0 h-[50vh]">
           <Card
             x-chunk="dashboard-05-chunk-3"
             className="flex flex-col w-full h-full"
@@ -322,17 +349,17 @@ export default function Profile() {
                         <TableHead className="text-right">Action</TableHead>
                       </TableRow>
                     </TableHeader>
-                    <TableBody>
-                      <div className="max-h-64 overflow-y-auto">
-                        {Array.from({ length: 10 }, (_, index) => (
-                          <TableRow className="bg-accent" key={index}>
-                            <TableCell>Dhruv Deora</TableCell>
-                            <TableCell className="text-right">
-                              <Button>Unfollow</Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </div>
+                    <TableBody className="max-h-64 overflow-y-auto">
+                      {friends.map((friend, index) => (
+                        <TableRow key={index} className="bg-accent">
+                          <TableCell>{friend}</TableCell>
+                          <TableCell className="text-right">
+                            <Button onClick={() => handleFollowChange(friend)}>
+                              {loading ? "Loading" : "Unfollow"}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </div>

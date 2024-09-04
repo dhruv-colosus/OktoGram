@@ -87,12 +87,12 @@ export default function ProtectedLayout({
     setLoading(false);
   }, [
     authToken,
-    getSupportedTokens,
-    getUserDetails,
-    getWallets,
-    setUser,
-    user,
-    createWallet,
+    // getSupportedTokens,
+    // getUserDetails,
+    // getWallets,
+    // setUser,
+    // user,
+    // createWallet,
   ]);
 
   useEffect(() => {
