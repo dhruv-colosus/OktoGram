@@ -32,6 +32,7 @@ interface PostCardProps {
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getBlockNumber } from "@/lib/contract";
+import { sliceEmailDomain } from "./PostCard";
 function GiveawayCard({
   caption,
   image,
@@ -103,7 +104,7 @@ function GiveawayCard({
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div>
-                  <span className="font-web3 text-xl">{user}</span>
+                  <span className="font-web3 text-xl">{sliceEmailDomain(user)}</span>
                   <p className="text-xs text-gray-400">
                     Posted {getMinutesAgo(blockTime, createdAt)} mins ago
                   </p>

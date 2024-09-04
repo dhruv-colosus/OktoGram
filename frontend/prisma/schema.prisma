@@ -8,10 +8,11 @@ datasource db {
 }
 
 model User {
-  email    String @id
-  username String @unique
-  wallet   String
-  // Tip      Tip[]
+  email      String @id
+  username   String @unique
+  wallet     String
+  followedBy User[] @relation("UserFollows")
+  following  User[] @relation("UserFollows")
 }
 
 model Image {
@@ -21,9 +22,9 @@ model Image {
 
 model Tip {
   id        String @id @default(uuid())
-  // tipper    User   @relation(fields: [userEmail], references: [email])
   userEmail String
   destEmail String
   postId    String
   amount    String
+  createdAt DateTime @default(now())
 }

@@ -11,12 +11,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { createGiveaway } from "@/actions/post";
 import { useAuthStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { createPost, createStory } from "@/lib/contract";
+import { createGiveaway, createPost, createStory } from "@/lib/contract";
 import axios from "axios";
 
 function Page() {
@@ -84,6 +83,7 @@ function Page() {
         //   encodedImages,
         //   nooflikes
         // );
+        await createGiveaway(caption, imageId, nooflikes)
         toast.success("Giveaway has been created.");
       } else {
         await createPost(caption, imageId);

@@ -9,14 +9,20 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store";
 import { toast } from "sonner";
 import { sleep } from "@/lib/contract";
+import { registerUser } from "@/actions/auth";
 
 export default function ProtectedLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { authenticate, getUserDetails, getSupportedTokens, getWallets } =
-    useOkto() as OktoContextType;
+  const {
+    authenticate,
+    getUserDetails,
+    getSupportedTokens,
+    getWallets,
+    createWallet,
+  } = useOkto() as OktoContextType;
   const {
     _hasHydrated,
     accessToken,
@@ -40,11 +46,11 @@ export default function ProtectedLayout({
   useEffect(() => {
     if (authToken || !accessToken || loading) return;
 
-    console.log("authenticating...", accessToken, authToken, loading);
+    console.log("authenticating...");
     setLoading(true);
     authenticate(accessToken, async (result, error) => {
       if (result) {
-        console.log("got auth", result);
+        console.log("got auth");
         setAuthToken(result.auth_token);
         setLoading(false);
       }
@@ -73,11 +79,10 @@ export default function ProtectedLayout({
       try {
         console.log("getting details");
 
+        await createWallet();
         const details = await getUserDetails();
         const wallets = await getWallets();
         const tokens = await getSupportedTokens();
-
-        console.log(wallets);
 
         setUser({
           user_id: details.user_id,
@@ -97,7 +102,19 @@ export default function ProtectedLayout({
     setUser,
     user,
     loading,
+    createWallet,
   ]);
+
+  useEffect(() => {
+    console.log("user is set", user);
+    if (!user) return;
+
+    try {
+      registerUser(user.email);
+    } catch (e) {
+      console.log(e);
+    }
+  }, [user]);
 
   return (
     <div className="flex h-screen w-full">

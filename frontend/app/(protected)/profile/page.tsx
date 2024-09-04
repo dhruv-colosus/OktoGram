@@ -46,9 +46,11 @@ import { useAuthStore } from "@/store";
 import { toast } from "sonner";
 import { Prisma, Tip } from "@prisma/client";
 import { OktoContextType, useOkto } from "okto-sdk-react";
+import { getTips } from "@/actions/other";
+import { sliceEmailDomain } from "@/app/Components/PostCard";
 
 export default function Profile() {
-  const { user } = useAuthStore();
+  const { user, _hasHydrated } = useAuthStore();
   console.log("user", user);
   const [sentTips, setSentTips] = useState<any[]>([]);
   const [tokens, setTokens] = useState<any>([]);
@@ -61,22 +63,23 @@ export default function Profile() {
   const { getPortfolio } = useOkto() as OktoContextType;
 
   useEffect(() => {
-    // getTips(user?.user_id || "-")
-    //   .then(({ sentTips: sTips, receivedTips: rTips }) => {
-    //     setSentTips(sTips);
-    //     setReceivedTips(rTips);
+    if (!_hasHydrated) return;
+    getTips(user?.email || "-")
+      .then(({ sentTips: sTips, receivedTips: rTips, error }) => {
+        setSentTips(sTips);
+        setReceivedTips(rTips);
 
-    //     const totalIn = rTips
-    //       .map((tip) => Number(tip.amount))
-    //       .reduce((a, b) => a + b, 0);
-    //     const totalOut = sTips
-    //       .map((tip) => Number(tip.amount))
-    //       .reduce((a, b) => a + b, 0);
-    //     setTotalTips({ in: totalIn * 0.49, out: totalOut * 0.49 });
-    //   })
-    //   .catch(() => {
-    //     toast.error("Insufficient Funds in Wallet");
-    //   });
+        const totalIn = rTips
+          .map((tip) => Number(tip.amount))
+          .reduce((a, b) => a + b, 0);
+        const totalOut = sTips
+          .map((tip) => Number(tip.amount))
+          .reduce((a, b) => a + b, 0);
+        setTotalTips({ in: totalIn * 0.49, out: totalOut * 0.49 });
+      })
+      .catch(() => {
+        toast.error("Insufficient Funds in Wallet");
+      });
 
     getPortfolio()
       .then((data) => {
@@ -88,10 +91,10 @@ export default function Profile() {
         );
         setTotalBal(bal * 0.5338);
       })
-      .catch(() => {
-        toast.error("Failed to get portfolio");
+      .catch((e) => {
+        // toast.error("Failed to get portfolio");
       });
-  }, []);
+  }, [user, getPortfolio, _hasHydrated]);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -283,7 +286,7 @@ export default function Profile() {
                                   <div className="font-medium">{tip.id}</div>
                                 </TableCell>
                                 <TableCell className="hidden sm:table-cell">
-                                  {tip.post.author.email}
+                                  {sliceEmailDomain(tip.destEmail)}
                                 </TableCell>
                                 <TableCell className="text-right">
                                   ${Number(tip.amount) * 0.49}
@@ -337,7 +340,7 @@ export default function Profile() {
                                   <div className="font-medium">{tip.id}</div>
                                 </TableCell>
                                 <TableCell className="hidden sm:table-cell">
-                                  {tip.from.email}
+                                  {sliceEmailDomain(tip.userEmail)}
                                 </TableCell>
                                 <TableCell className="text-right">
                                   ${Number(tip.amount) * 0.49}

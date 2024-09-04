@@ -76,6 +76,11 @@ const toNetworkName = (capsName: string) => {
     .join(" ");
 };
 
+export function sliceEmailDomain(email: string): string {
+  const atIndex = email.indexOf("@");
+  return atIndex !== -1 ? email.slice(0, atIndex) : "";
+}
+
 const availTokens = [
   {
     token_address: "",
@@ -91,8 +96,6 @@ function PostCard({
   createdAt,
   likes,
 }: PostCardProps) {
-  console.log(postId, caption, image, user, createdAt, likes);
-
   const router = useRouter();
 
   const [isLiked, setIsLiked] = useState(false);
@@ -127,10 +130,7 @@ function PostCard({
     );
     return differenceInMinutes;
   }
-  function sliceEmailDomain(email: string): string {
-    const atIndex = email.indexOf("@");
-    return atIndex !== -1 ? email.slice(0, atIndex) : "";
-  }
+  
   const awardfunc = async () => {
     console.log(amountVal, networkVal, tokenVal);
 
@@ -147,8 +147,8 @@ function PostCard({
         console.log("Transfer success", result);
         setDialogOpen(false);
         await storeTip(
-          authUser?.email || "",
-          user.author,
+          authUser!.email || "",
+          user.name,
           amountVal.toString(),
           postId
         );

@@ -3,10 +3,12 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
-export const registerUser = async (email: string, username: string) => {
+export const registerUser = async (email: string) => {
+  console.log(email);
+
   try {
-    const user = await prisma.user.create({
-      data: { email, username, wallet: "0x" },
+    await prisma.user.create({
+      data: { email, username: email, wallet: "0x" },
     });
     return { error: null };
   } catch (e) {

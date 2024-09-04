@@ -15,12 +15,12 @@ function Home() {
       console.log(
         (posts as any[])
           .toSorted((a, b) => Number(a.createdAt) - Number(b.createdAt))
-          .filter((post) => !post.isGiveaway)
+          .filter((post) => post.isGiveaway)
       );
       setPosts(
         (posts as any[])
           .toSorted((a, b) => Number(b.createdAt) - Number(a.createdAt))
-          .filter((post) => !post.isGiveaway)
+          .filter((post) => post.isGiveaway)
       );
     });
   }, []);

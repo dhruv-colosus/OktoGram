@@ -8,11 +8,17 @@ import FriendsRec from "../Components/FriendsRec";
 import { useEffect, useState } from "react";
 import { getPosts } from "@/lib/contract";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getFriends } from "@/actions/other";
+import { useAuthStore } from "@/store";
 
 export default function Home() {
   const [posts, setPosts] = useState<any[]>([]);
+  const [postsFiltered, setPostsFiltered] = useState<any[]>([]);
+  const [friends, setFriends] = useState<string[]>([]);
+  const { user, _hasHydrated } = useAuthStore();
 
   useEffect(() => {
+    if (!_hasHydrated) return;
     getPosts().then((posts) => {
       console.log(
         (posts as any[])
@@ -25,7 +31,20 @@ export default function Home() {
           .filter((post) => !post.isGiveaway)
       );
     });
-  }, []);
+
+    getFriends(user!.email).then((_friends) => {
+      if (!Array.isArray(_friends)) {
+        console.log(_friends.error);
+        return;
+      }
+      setFriends(_friends);
+    });
+  }, [_hasHydrated, user]);
+
+  useEffect(() => {
+    
+    setPostsFiltered(posts.filter((post) => friends.includes(post.user.name)));
+  }, [posts, friends]);
 
   return (
     <>
@@ -37,7 +56,7 @@ export default function Home() {
             New Posts from Friends
           </h2>
           <div className="flex flex-col items-center justify-center">
-            {posts?.map((post) => {
+            {postsFiltered.map((post) => {
               return (
                 <PostCard
                   key={post.id.toString()}

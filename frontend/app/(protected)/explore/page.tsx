@@ -15,7 +15,11 @@ export default function Home() {
   useEffect(() => {
     getPosts().then((posts) => {
       console.log(posts);
-      setPosts((posts as any[]).toReversed());
+      setPosts(
+        (posts as any[])
+          .toSorted((a, b) => Number(a.createdAt) - Number(b.createdAt))
+          .filter((post) => !post.isGiveaway)
+      );
     });
   }, []);
 

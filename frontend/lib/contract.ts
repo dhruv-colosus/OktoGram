@@ -109,6 +109,12 @@ const callFunction = async (c: any, func: string, value: string, args: any) => {
       console.log(job);
       if (job.status === "SUCCESS") {
         toast.success("The transaction was successful");
+        resolve()
+        return
+      }else if(job.status === "FAILED"){
+        toast.error("Insufficient balance in your account")
+        reject()
+        return
       }
 
       await sleep(TRIES_INTERVAL);
@@ -148,11 +154,11 @@ export const createGiveaway = async (
   imageId: string,
   targetLikes: number
 ) => {
-  await callFunction(contract, "createGiveaway", "0x0", [
+  await callFunction(contract, "createGiveawayPost", "0x0", [
     useAuthStore.getState().user?.email || "user",
     imageId,
     content,
-    process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS,
+    process.env.NEXT_PUBLIC_NFT_ADDRESS,
     imageId,
     targetLikes,
   ]);
