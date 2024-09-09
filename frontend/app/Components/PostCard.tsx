@@ -187,7 +187,7 @@ function PostCard({
                 <Avatar
                   className=" cursor-pointer"
                   onClick={() => {
-                    router.push(`/user/${user}`);
+                    router.push(`/user/${user.name}`);
                   }}
                 >
                   <AvatarImage
@@ -200,7 +200,7 @@ function PostCard({
                   <span
                     className="font-web3 text-xl cursor-pointer"
                     onClick={() => {
-                      router.push(`/user/${user}`);
+                      router.push(`/user/${user.name}`);
                     }}
                   >
                     {sliceEmailDomain(user.name)}

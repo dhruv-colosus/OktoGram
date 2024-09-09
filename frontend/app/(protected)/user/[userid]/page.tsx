@@ -37,12 +37,14 @@ import { useAuthStore } from "@/store";
 import { toast } from "sonner";
 import { Prisma, Tip } from "@prisma/client";
 import { OktoContextType, useOkto } from "okto-sdk-react";
+import { getTips } from "@/actions/other";
+import { getPosts } from "@/lib/contract";
 
 // type TipWithUser = Prisma.TipGetPayload<{
 //   include: { post: { include: { author: true } }; from: true };
 // }>;
 
-export default function Profile({ params }) {
+export default function Profile({ params }: { params: { userid: string } }) {
   const mockData = {
     posts: [
       { id: 1, url: "https://picsum.photos/300/300?random=1" },
@@ -65,73 +67,59 @@ export default function Profile({ params }) {
   };
   const { user } = useAuthStore();
 
-  const [sentTips, setSentTips] = useState<TipWithUser[]>([]);
-  const [receivedTips, setReceivedTips] = useState<TipWithUser[]>([]);
   const [totalTips, setTotalTips] = useState<{ in: number; out: number }>({
     in: 0,
     out: 0,
   });
-  const [totalBal, setTotalBal] = useState(0);
-  const { getPortfolio } = useOkto() as OktoContextType;
+
+  const [posts, setPosts] = useState<any[]>([])
+  const [giveaways, setGiveaways] = useState<any[]>([])
 
   useEffect(() => {
-    // getTips(user?.user_id || "-")
-    //   .then(({ sentTips: sTips, receivedTips: rTips }) => {
-    //     setSentTips(sTips);
-    //     setReceivedTips(rTips);
+    getTips(decodeURIComponent(params.userid))
+      .then(({ sentTips: sTips, receivedTips: rTips, error }) => {
+        console.log(sTips, rTips, error, params);
 
-    //     const totalIn = rTips
-    //       .map((tip) => Number(tip.amount))
-    //       .reduce((a, b) => a + b, 0);
-    //     const totalOut = sTips
-    //       .map((tip) => Number(tip.amount))
-    //       .reduce((a, b) => a + b, 0);
-    //     setTotalTips({ in: totalIn * 0.49, out: totalOut * 0.49 });
-    //   })
-    //   .catch(() => {
-    //     toast.error("Insufficient Funds in Wallet");
-    //   });
-
-    getPortfolio()
-      .then((data) => {
-        let bal = data.tokens.reduce(
-          (prev, curr) => prev + Number(curr.quantity),
-          0
-        );
-        setTotalBal(bal * 0.49);
+        const totalIn = rTips
+          .map((tip) => Number(tip.amount))
+          .reduce((a, b) => a + b, 0);
+        const totalOut = sTips
+          .map((tip) => Number(tip.amount))
+          .reduce((a, b) => a + b, 0);
+        setTotalTips({ in: totalIn * 0.49, out: totalOut * 0.49 });
       })
       .catch(() => {
-        toast.error("Failed to get portfolio");
+        toast.error("Insufficient Funds in Wallet");
       });
+
+    getPosts().then((posts) => {
+      setPosts(
+        (posts as any[])
+          .toSorted((a, b) => Number(b.createdAt) - Number(a.createdAt))
+          .filter((post) => !post.isGiveaway && post.user.name === decodeURIComponent(params.userid))
+      );
+      setGiveaways(
+        (posts as any[])
+          .toSorted((a, b) => Number(b.createdAt) - Number(a.createdAt))
+          .filter((post) => post.isGiveaway && post.user.name === decodeURIComponent(params.userid))
+      );
+    });
   }, []);
+
+  console.log(posts, giveaways);
+
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40 overflow-y-auto">
       <div className="flex flex-col sm:gap-4 sm:py-4 ">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           <h1 className="text-3xl font-web3 font-bold">
-            {params.userid.slice(0, 20)} Profile
+            {decodeURIComponent(params.userid.slice(0, 20))} Profile
           </h1>
         </header>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 ">
           <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3">
-              <Card x-chunk="dashboard-05-chunk-2">
-                <CardHeader className="pb-2">
-                  <CardDescription> Total Balance</CardDescription>
-                  <CardTitle className="text-4xl">
-                    ${totalBal.toFixed(4)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground">
-                    Powered by Okto
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Progress value={100} aria-label="100% increase" />
-                </CardFooter>
-              </Card>
               <Card x-chunk="dashboard-05-chunk-1">
                 <CardHeader className="pb-2">
                   <CardDescription> Total Amount Tipped</CardDescription>
@@ -171,26 +159,26 @@ export default function Profile({ params }) {
               </TabsList>
               <TabsContent value="posts">
                 <div className="grid grid-cols-3 gap-4">
-                  {mockData.posts.map((image) => (
-                    <div key={image.id} className="aspect-square">
+                  {posts.map((post, idx) =>
+                    <div key={idx} className="aspect-square">
                       <img
-                        src={image.url}
-                        alt={`Image ${image.id}`}
+                        src={`/api/image?id=${post.image}`}
+                        alt={`Image`}
                         width={300}
                         height={300}
                         className="object-cover w-full h-full"
                       />
                     </div>
-                  ))}
+                  )}
                 </div>
               </TabsContent>
               <TabsContent value="giveaways">
                 <div className="grid grid-cols-3 gap-4">
-                  {mockData.giveaways.map((image) => (
-                    <div key={image.id} className="aspect-square">
+                  {giveaways.map((giveaway, idx) => (
+                    <div key={idx} className="aspect-square">
                       <img
-                        src={image.url}
-                        alt={`Image ${image.id}`}
+                        src={`/api/image?id=${giveaway.image}`}
+                        alt={`Giveaway`}
                         width={300}
                         height={300}
                         className="object-cover w-full h-full"
